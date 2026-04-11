@@ -54,30 +54,30 @@ export async function createProfile(profile: TablesInsert<"profiles">) {
   const { data, error } = await supabase
     .from("profiles")
     .insert(profile)
-    .select();
+    .select()
+    .single();
   if (error) throw error;
-  if (!data || data.length === 0) throw new Error("Profile could not be created — check RLS policies.");
-  return data[0];
+  return data;
 }
 
 export async function createMenuCategory(category: TablesInsert<"menu_categories">) {
   const { data, error } = await supabase
     .from("menu_categories")
     .insert(category)
-    .select();
+    .select()
+    .single();
   if (error) throw error;
-  if (!data || data.length === 0) throw new Error("Category could not be created — check RLS policies.");
-  return data[0];
+  return data;
 }
 
 export async function createMenuItem(item: TablesInsert<"menu_items">) {
   const { data, error } = await supabase
     .from("menu_items")
     .insert(item)
-    .select();
+    .select()
+    .single();
   if (error) throw error;
-  if (!data || data.length === 0) throw new Error("Item could not be created — check RLS policies.");
-  return data[0];
+  return data;
 }
 
 export async function incrementViews(slug: string) {
@@ -89,10 +89,10 @@ export async function updateProfile(id: string, updates: Partial<TablesInsert<"p
     .from("profiles")
     .update(updates)
     .eq("id", id)
-    .select();
+    .select()
+    .single();
   if (error) throw error;
-  if (!data || data.length === 0) throw new Error("Profile update failed — row not found or RLS blocked.");
-  return data[0];
+  return data;
 }
 
 export async function updateMenuCategory(id: string, updates: Partial<TablesInsert<"menu_categories">>) {
@@ -100,10 +100,10 @@ export async function updateMenuCategory(id: string, updates: Partial<TablesInse
     .from("menu_categories")
     .update(updates)
     .eq("id", id)
-    .select();
+    .select()
+    .single();
   if (error) throw error;
-  if (!data || data.length === 0) throw new Error("Category update failed.");
-  return data[0];
+  return data;
 }
 
 export async function updateMenuItem(id: string, updates: Partial<TablesInsert<"menu_items">>) {
@@ -111,10 +111,10 @@ export async function updateMenuItem(id: string, updates: Partial<TablesInsert<"
     .from("menu_items")
     .update(updates)
     .eq("id", id)
-    .select();
+    .select()
+    .single();
   if (error) throw error;
-  if (!data || data.length === 0) throw new Error("Item update failed.");
-  return data[0];
+  return data;
 }
 
 export async function deleteMenuCategory(id: string) {
