@@ -1,14 +1,16 @@
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Phone, MessageCircle, Mail, Globe, Facebook, Instagram, Linkedin, Twitter, Download, User, Loader2 } from "lucide-react";
+import { Phone, MessageCircle, Mail, Globe, Facebook, Instagram, Linkedin, Twitter, Download, User, Loader2, Pencil } from "lucide-react";
 import { fetchProfileBySlug, incrementViews } from "@/lib/api";
 import { downloadVCard } from "@/lib/vcard";
+import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
 
 export default function PersonalProfile() {
   const { username } = useParams();
+  const { user } = useAuth();
 
   const { data: profile, isLoading } = useQuery({
     queryKey: ["profile", username],
@@ -54,13 +56,35 @@ export default function PersonalProfile() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 gap-3">
+      {/* ── Owner edit button ── */}
+      {!!user && profile.user_id === user.id && (
+        <div className="w-full max-w-sm flex justify-end">
+          <Button asChild size="sm" variant="outline">
+            <Link to={`/edit/${profile.slug}`}>
+              <Pencil className="h-4 w-4 mr-2" /> Edit Profile
+            </Link>
+          </Button>
+        </div>
+      )}
       <Card className="w-full max-w-sm card-elevated overflow-hidden">
-        <div className="hero-gradient h-28" />
+        {profile.cover_url ? (
+          <img src={profile.cover_url} alt="Cover" className="h-28 w-full object-cover" />
+        ) : (
+          <div className="hero-gradient h-28" />
+        )}
         <CardContent className="relative -mt-12 text-center pb-8">
-          <div className="h-20 w-20 rounded-full bg-primary/20 border-4 border-card flex items-center justify-center mx-auto mb-3">
-            <User className="h-10 w-10 text-primary" />
-          </div>
+          {profile.image_url ? (
+            <img 
+              src={profile.image_url} 
+              alt={profile.name} 
+              className="h-24 w-24 rounded-full object-cover border-4 border-card mx-auto mb-3 shadow" 
+            />
+          ) : (
+            <div className="h-20 w-20 rounded-full bg-primary/20 border-4 border-card flex items-center justify-center mx-auto mb-3 shadow">
+              <User className="h-10 w-10 text-primary" />
+            </div>
+          )}
           <h1 className="font-display text-xl font-bold">{profile.name}</h1>
           <p className="text-sm text-muted-foreground mt-1 mb-5">{profile.description}</p>
 

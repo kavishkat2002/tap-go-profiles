@@ -1,14 +1,20 @@
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Phone, MessageCircle, Mail, MapPin, UtensilsCrossed, Loader2 } from "lucide-react";
+import {
+  Phone, MessageCircle, Mail, MapPin, Globe,
+  UtensilsCrossed, Loader2, Facebook, Instagram, Twitter, Linkedin, Pencil
+} from "lucide-react";
 import { fetchProfileBySlug, fetchMenuForProfile, incrementViews } from "@/lib/api";
+import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
 
 export default function RestaurantProfile() {
   const { restaurant } = useParams();
+  const { user } = useAuth();
 
   const { data: profile, isLoading } = useQuery({
     queryKey: ["profile", restaurant],
@@ -42,76 +48,139 @@ export default function RestaurantProfile() {
     );
   }
 
+  // Build contact buttons array dynamically
+  const contactButtons = [
+    profile.phone    && { href: `tel:${profile.phone}`,                              icon: <Phone className="h-5 w-5 text-primary" />,          label: "Call" },
+    profile.whatsapp && { href: `https://wa.me/${profile.whatsapp.replace(/\+/g,"")}`, icon: <MessageCircle className="h-5 w-5 text-primary" />,    label: "WhatsApp", external: true },
+    profile.email    && { href: `mailto:${profile.email}`,                            icon: <Mail className="h-5 w-5 text-primary" />,            label: "Email" },
+    profile.website  && { href: profile.website,                                      icon: <Globe className="h-5 w-5 text-primary" />,           label: "Website", external: true },
+  ].filter(Boolean) as { href: string; icon: React.ReactNode; label: string; external?: boolean }[];
+
+  // Social links
+  const socials = [
+    profile.facebook  && { href: profile.facebook,  icon: <Facebook  className="h-4 w-4" />, label: "Facebook"  },
+    profile.instagram && { href: profile.instagram, icon: <Instagram className="h-4 w-4" />, label: "Instagram" },
+    profile.twitter   && { href: profile.twitter,   icon: <Twitter   className="h-4 w-4" />, label: "Twitter"   },
+    profile.linkedin  && { href: profile.linkedin,  icon: <Linkedin  className="h-4 w-4" />, label: "LinkedIn"  },
+  ].filter(Boolean) as { href: string; icon: React.ReactNode; label: string }[];
+
+  const isOwner = !!user && profile.user_id === user.id;
+
   return (
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-lg mx-auto space-y-4">
+        {/* ── Owner edit button ── */}
+        {isOwner && (
+          <div className="flex justify-end">
+            <Button asChild size="sm" variant="outline">
+              <Link to={`/edit/${profile.slug}`}>
+                <Pencil className="h-4 w-4 mr-2" /> Edit Profile
+              </Link>
+            </Button>
+          </div>
+        )}
+
+        {/* ── Hero card ── */}
         <Card className="card-elevated overflow-hidden">
-          <div className="hero-gradient h-32" />
+          {profile.cover_url ? (
+            <img src={profile.cover_url} alt="Cover" className="h-32 w-full object-cover" />
+          ) : (
+            <div className="hero-gradient h-32" />
+          )}
           <CardContent className="relative -mt-10 pb-6">
-            <div className="h-16 w-16 rounded-xl bg-primary/20 border-4 border-card flex items-center justify-center mb-3">
-              <UtensilsCrossed className="h-8 w-8 text-primary" />
-            </div>
+            {profile.image_url ? (
+              <img
+                src={profile.image_url}
+                alt={profile.name}
+                className="h-20 w-20 rounded-xl object-cover border-4 border-card mb-3 shadow"
+              />
+            ) : (
+              <div className="h-16 w-16 rounded-xl bg-primary/20 border-4 border-card flex items-center justify-center mb-3">
+                <UtensilsCrossed className="h-8 w-8 text-primary" />
+              </div>
+            )}
             <h1 className="font-display text-2xl font-bold">{profile.name}</h1>
-            <p className="text-sm text-muted-foreground mt-1">{profile.description}</p>
+            {profile.description && (
+              <p className="text-sm text-muted-foreground mt-1">{profile.description}</p>
+            )}
             {profile.address && (
               <div className="flex items-center gap-2 text-sm text-muted-foreground mt-3">
-                <MapPin className="h-4 w-4" /> {profile.address}
+                <MapPin className="h-4 w-4 shrink-0" /> {profile.address}
+              </div>
+            )}
+
+            {/* Social badges */}
+            {socials.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-4">
+                {socials.map((s) => (
+                  <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer">
+                    <Badge variant="secondary" className="flex items-center gap-1.5 px-2.5 py-1 cursor-pointer hover:bg-primary/10 transition-colors">
+                      {s.icon}
+                      <span className="text-xs">{s.label}</span>
+                    </Badge>
+                  </a>
+                ))}
               </div>
             )}
           </CardContent>
         </Card>
 
-        <Card className="card-elevated">
-          <CardContent className="p-4 grid grid-cols-3 gap-2">
-            {profile.phone && (
-              <a href={`tel:${profile.phone}`}>
-                <Button variant="outline" className="w-full flex-col h-auto py-3 gap-1">
-                  <Phone className="h-5 w-5 text-primary" />
-                  <span className="text-xs">Call</span>
-                </Button>
-              </a>
-            )}
-            {profile.whatsapp && (
-              <a href={`https://wa.me/${profile.whatsapp.replace(/\+/g, "")}`} target="_blank" rel="noopener noreferrer">
-                <Button variant="outline" className="w-full flex-col h-auto py-3 gap-1">
-                  <MessageCircle className="h-5 w-5 text-primary" />
-                  <span className="text-xs">WhatsApp</span>
-                </Button>
-              </a>
-            )}
-            {profile.email && (
-              <a href={`mailto:${profile.email}`}>
-                <Button variant="outline" className="w-full flex-col h-auto py-3 gap-1">
-                  <Mail className="h-5 w-5 text-primary" />
-                  <span className="text-xs">Email</span>
-                </Button>
-              </a>
-            )}
-          </CardContent>
-        </Card>
+        {/* ── Contact buttons ── */}
+        {contactButtons.length > 0 && (
+          <Card className="card-elevated">
+            <CardContent className={`p-4 grid gap-2 ${contactButtons.length <= 2 ? "grid-cols-2" : contactButtons.length === 3 ? "grid-cols-3" : "grid-cols-4"}`}>
+              {contactButtons.map((btn) => (
+                <a key={btn.label} href={btn.href} target={btn.external ? "_blank" : undefined} rel={btn.external ? "noopener noreferrer" : undefined}>
+                  <Button variant="outline" className="w-full flex-col h-auto py-3 gap-1">
+                    {btn.icon}
+                    <span className="text-xs">{btn.label}</span>
+                  </Button>
+                </a>
+              ))}
+            </CardContent>
+          </Card>
+        )}
 
+        {/* ── Menu ── */}
         {categories.length > 0 && (
           <Card className="card-elevated">
             <CardContent className="p-5">
               <h2 className="font-display text-lg font-semibold mb-4">Menu</h2>
               <Tabs defaultValue={categories[0]?.id}>
-                <TabsList className="w-full justify-start overflow-x-auto mb-4">
+                <TabsList className="w-full justify-start overflow-x-auto mb-4 flex-wrap h-auto gap-1">
                   {categories.map((cat) => (
                     <TabsTrigger key={cat.id} value={cat.id}>{cat.name}</TabsTrigger>
                   ))}
                 </TabsList>
                 {categories.map((cat) => (
                   <TabsContent key={cat.id} value={cat.id} className="space-y-3">
-                    {cat.items.map((item) => (
-                      <div key={item.id} className="flex items-start justify-between p-3 rounded-lg bg-muted/50">
+                    {(cat as any).items.map((item: any) => (
+                      <div key={item.id} className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted/70 transition-colors">
+                        {/* Item image — real photo or placeholder */}
+                        <div className="h-16 w-16 rounded-lg overflow-hidden shrink-0 bg-muted flex items-center justify-center border border-border">
+                          {item.image_url ? (
+                            <img
+                              src={item.image_url}
+                              alt={item.name}
+                              className="h-full w-full object-cover"
+                              onError={(e) => {
+                                // If image fails to load, show placeholder
+                                (e.target as HTMLImageElement).style.display = 'none';
+                                (e.target as HTMLImageElement).parentElement!.innerHTML = '<span style="font-size:1.75rem">🍽️</span>';
+                              }}
+                            />
+                          ) : (
+                            <span className="text-2xl select-none">🍽️</span>
+                          )}
+                        </div>
                         <div className="flex-1 min-w-0">
                           <h4 className="font-medium text-sm">{item.name}</h4>
                           {item.description && (
-                            <p className="text-xs text-muted-foreground mt-0.5">{item.description}</p>
+                            <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{item.description}</p>
                           )}
                         </div>
-                        <span className="font-display font-semibold text-primary text-sm ml-3">
-                          ${Number(item.price).toFixed(2)}
+                        <span className="font-display font-semibold text-primary text-sm ml-2 shrink-0">
+                          Rs. {Number(item.price).toFixed(2)}
                         </span>
                       </div>
                     ))}
@@ -121,6 +190,7 @@ export default function RestaurantProfile() {
             </CardContent>
           </Card>
         )}
+
       </div>
     </div>
   );

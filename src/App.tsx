@@ -12,6 +12,7 @@ import PersonalProfile from "./pages/PersonalProfile";
 import BusinessProfile from "./pages/BusinessProfile";
 import RestaurantProfile from "./pages/RestaurantProfile";
 import NotFound from "./pages/NotFound";
+import EditProfile from "./pages/EditProfile";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +31,7 @@ const App = () => (
             <Route path="/u/:username" element={<PersonalProfile />} />
             <Route path="/b/:business" element={<BusinessProfile />} />
             <Route path="/r/:restaurant" element={<RestaurantProfile />} />
+            <Route path="/edit/:slug" element={<EditProfile />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
