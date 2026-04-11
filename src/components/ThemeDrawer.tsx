@@ -27,8 +27,9 @@ const BACKGROUNDS = [
   { id: "bg-theme-default", name: "Solid", preview: "bg-muted" },
   { id: "bg-theme-dots", name: "Dots", preview: "bg-[radial-gradient(#00000030_1px,transparent_1px)]" },
   { id: "bg-theme-grid", name: "Grid", preview: "bg-[linear-gradient(#00000020_1px,transparent_1px),linear-gradient(90deg,#00000020_1px,transparent_1px)]" },
-  { id: "bg-theme-cultural", name: "Cultural", preview: "bg-primary/20" },
-  { id: "bg-theme-custom1", name: "Custom", preview: "bg-primary/30" },
+  { id: "bg-theme-cultural", name: "Dancer", preview: "bg-primary/20" },
+  { id: "bg-theme-white-pattern", name: "Pattern", preview: "bg-white border shadow-sm" },
+  { id: "bg-theme-artistic-abstract", name: "Artistic", preview: "bg-muted shadow-inner" },
 ];
 
 export default function ThemeDrawer({ profile }: { profile: any }) {

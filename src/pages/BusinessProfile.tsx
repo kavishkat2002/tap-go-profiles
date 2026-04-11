@@ -44,24 +44,27 @@ export default function BusinessProfile() {
   }
 
   const contactButtons = [
-    profile.phone    && { href: `tel:${profile.phone}`,                               icon: <Phone className="h-5 w-5 text-primary" />,        label: "Call" },
-    profile.whatsapp && { href: `https://wa.me/${profile.whatsapp.replace(/\+/g,"")}`, icon: <MessageCircle className="h-5 w-5 text-primary" />, label: "WhatsApp", external: true },
-    profile.email    && { href: `mailto:${profile.email}`,                             icon: <Mail className="h-5 w-5 text-primary" />,          label: "Email" },
-    profile.website  && { href: profile.website,                                       icon: <Globe className="h-5 w-5 text-primary" />,         label: "Website", external: true },
+    profile.phone && { href: `tel:${profile.phone}`, icon: <Phone className="h-5 w-5 text-primary" />, label: "Call" },
+    profile.whatsapp && { href: `https://wa.me/${profile.whatsapp.replace(/\+/g, "")}`, icon: <MessageCircle className="h-5 w-5 text-primary" />, label: "WhatsApp", external: true },
+    profile.email && { href: `mailto:${profile.email}`, icon: <Mail className="h-5 w-5 text-primary" />, label: "Email" },
+    profile.website && { href: profile.website, icon: <Globe className="h-5 w-5 text-primary" />, label: "Website", external: true },
   ].filter(Boolean) as { href: string; icon: React.ReactNode; label: string; external?: boolean }[];
 
   const socials = [
-    profile.facebook  && { href: profile.facebook,  icon: <Facebook  className="h-4 w-4" />, label: "Facebook"  },
+    profile.facebook && { href: profile.facebook, icon: <Facebook className="h-4 w-4" />, label: "Facebook" },
     profile.instagram && { href: profile.instagram, icon: <Instagram className="h-4 w-4" />, label: "Instagram" },
-    profile.twitter   && { href: profile.twitter,   icon: <Twitter   className="h-4 w-4" />, label: "Twitter"   },
-    profile.linkedin  && { href: profile.linkedin,  icon: <Linkedin  className="h-4 w-4" />, label: "LinkedIn"  },
+    profile.twitter && { href: profile.twitter, icon: <Twitter className="h-4 w-4" />, label: "Twitter" },
+    profile.linkedin && { href: profile.linkedin, icon: <Linkedin className="h-4 w-4" />, label: "LinkedIn" },
   ].filter(Boolean) as { href: string; icon: React.ReactNode; label: string }[];
 
   const isOwner = !!user && profile.user_id === user.id;
 
   return (
-    <div id="profile-wrapper" className={`min-h-screen bg-background p-4 ${profile.bg_theme || ''} ${profile.theme || ''}`}>
-      <div className="max-w-lg mx-auto space-y-4">
+    <div id="profile-wrapper" className={`min-h-screen bg-background p-4 flex flex-col items-center pt-8 ${profile.bg_theme || ''} ${profile.theme || ''}`}>
+      <div className="w-full max-w-lg space-y-6 relative">
+        {/* Artistic background blur decorative element */}
+        <div className="absolute -top-20 -left-20 w-64 h-64 bg-primary/10 rounded-full blur-3xl -z-10 animate-pulse" />
+        <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-accent/10 rounded-full blur-3xl -z-10 animate-pulse" />
         {/* ── Owner edit button ── */}
         {isOwner && (
           <div className="flex justify-end gap-2">
@@ -75,7 +78,7 @@ export default function BusinessProfile() {
         )}
 
         {/* ── Hero card ── */}
-        <Card className="card-elevated overflow-hidden">
+        <Card className="card-artistic overflow-hidden">
           {profile.cover_url ? (
             <img src={profile.cover_url} alt="Cover" className="h-32 w-full object-cover" />
           ) : (
@@ -124,7 +127,7 @@ export default function BusinessProfile() {
 
         {/* ── Contact buttons ── */}
         {contactButtons.length > 0 && (
-          <Card className="card-elevated">
+          <Card className="card-artistic">
             <CardContent className={`p-4 grid gap-2 ${contactButtons.length <= 2 ? "grid-cols-2" : contactButtons.length === 3 ? "grid-cols-3" : "grid-cols-4"}`}>
               {contactButtons.map((btn) => (
                 <a key={btn.label} href={btn.href} target={btn.external ? "_blank" : undefined} rel={btn.external ? "noopener noreferrer" : undefined}>
@@ -140,7 +143,7 @@ export default function BusinessProfile() {
 
         {/* ── Services ── */}
         {profile.services && profile.services.length > 0 && (
-          <Card className="card-elevated">
+          <Card className="card-artistic">
             <CardContent className="p-5">
               <h2 className="font-display font-semibold mb-3">Services</h2>
               <div className="flex flex-wrap gap-2">

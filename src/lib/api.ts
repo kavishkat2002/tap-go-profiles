@@ -127,3 +127,12 @@ export async function deleteMenuItem(id: string) {
   if (error) throw error;
 }
 
+export async function createOrder(order: any) {
+  const { data, error } = await supabase
+    .from("orders")
+    .insert(order)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}

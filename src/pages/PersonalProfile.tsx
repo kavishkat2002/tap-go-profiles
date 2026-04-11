@@ -58,7 +58,10 @@ export default function PersonalProfile() {
   };
 
   return (
-    <div id="profile-wrapper" className={`min-h-screen bg-background flex flex-col items-center justify-center p-4 gap-3 ${profile.bg_theme || ''} ${profile.theme || ''}`}>
+    <div id="profile-wrapper" className={`min-h-screen flex flex-col items-center justify-center p-4 gap-6 relative ${profile.bg_theme || ''} ${profile.theme || ''}`}>
+      {/* Artistic background blur decorative element */}
+      <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/10 rounded-full blur-3xl -z-10 animate-pulse" />
+      <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-accent/10 rounded-full blur-3xl -z-10 animate-pulse" />
       {/* ── Owner edit button ── */}
       {!!user && profile.user_id === user.id && (
         <div className="w-full max-w-sm flex justify-end gap-2">
@@ -70,7 +73,7 @@ export default function PersonalProfile() {
           </Button>
         </div>
       )}
-      <Card className="w-full max-w-sm card-elevated overflow-hidden">
+      <Card className="w-full max-w-sm card-artistic">
         {profile.cover_url ? (
           <img src={profile.cover_url} alt="Cover" className="h-28 w-full object-cover" />
         ) : (
