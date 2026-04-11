@@ -38,7 +38,7 @@ export default function CreateProfile() {
   const [form, setForm] = useState({
     name: "", slug: "", description: "", phone: "", whatsapp: "",
     email: "", website: "", address: "", facebook: "", instagram: "",
-    linkedin: "", twitter: "", services: "", theme: "theme-default"
+    linkedin: "", twitter: "", services: "", theme: "theme-default", bg_theme: "bg-theme-default",
   });
   const [menuCategories, setMenuCategories] = useState<MenuCategoryLocal[]>([]);
   const [profileImage, setProfileImage] = useState<{ file: File; preview: string } | null>(null);
@@ -133,6 +133,7 @@ export default function CreateProfile() {
           ? form.services.split("\n").map((s) => s.trim()).filter(Boolean)
           : null,
         theme: form.theme,
+        bg_theme: form.bg_theme,
       });
 
       if (profileType === "restaurant") {
@@ -302,6 +303,20 @@ export default function CreateProfile() {
                       <SelectItem value="theme-green">Green Theme</SelectItem>
                       <SelectItem value="theme-rose">Rose Theme</SelectItem>
                       <SelectItem value="theme-orange">Orange Theme</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>Background Theme (Pattern)</Label>
+                  <Select value={form.bg_theme} onValueChange={(val) => setForm((f) => ({ ...f, bg_theme: val }))}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Background Mode" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="bg-theme-default">Solid (Default)</SelectItem>
+                      <SelectItem value="bg-theme-dots">Modern Dots</SelectItem>
+                      <SelectItem value="bg-theme-grid">Technical Grid</SelectItem>
+                      <SelectItem value="bg-theme-cultural">Cultural / Traditional pattern</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

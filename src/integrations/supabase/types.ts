@@ -90,6 +90,7 @@ export type Database = {
       profiles: {
         Row: {
           address: string | null
+          bg_theme: string | null
           cover_url: string | null
           created_at: string
           description: string | null
@@ -114,6 +115,7 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          bg_theme?: string | null
           cover_url?: string | null
           created_at?: string
           description?: string | null
@@ -138,6 +140,7 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          bg_theme?: string | null
           cover_url?: string | null
           created_at?: string
           description?: string | null

@@ -74,7 +74,7 @@ export default function EditProfile() {
     name: "", description: "", phone: "", whatsapp: "",
     email: "", website: "", address: "", facebook: "",
     instagram: "", linkedin: "", twitter: "", services: "",
-    theme: "theme-default",
+    theme: "theme-default", bg_theme: "bg-theme-default",
   });
   const [menuCategories, setMenuCategories] = useState<MenuCategoryLocal[]>([]);
   const [profileImage, setProfileImage] = useState<{ file: File | null; preview: string | null; deleted?: boolean }>({ file: null, preview: null });
@@ -97,6 +97,7 @@ export default function EditProfile() {
       twitter: profile.twitter ?? "",
       services: (profile.services ?? []).join("\n"),
       theme: profile.theme ?? "theme-default",
+      bg_theme: profile.bg_theme ?? "bg-theme-default",
     });
     setProfileImage({ file: null, preview: profile.image_url ?? null, deleted: false });
     setCoverImage({ file: null, preview: profile.cover_url ?? null, deleted: false });
@@ -247,6 +248,7 @@ export default function EditProfile() {
         linkedin: form.linkedin || null,
         twitter: form.twitter || null,
         theme: form.theme || "theme-default",
+        bg_theme: form.bg_theme || "bg-theme-default",
         services: profile.type === "business" && form.services
           ? form.services.split("\n").map((s) => s.trim()).filter(Boolean)
           : null,
@@ -449,6 +451,21 @@ export default function EditProfile() {
               <div className="space-y-2">
                 <Label>URL Slug</Label>
                 <Input value={profile.slug} disabled className="opacity-60 cursor-not-allowed" title="Slug cannot be changed" />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Background Theme (Pattern)</Label>
+                <Select value={form.bg_theme} onValueChange={(val) => setForm((f) => ({ ...f, bg_theme: val }))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Background Theme" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="bg-theme-default">Solid (Default)</SelectItem>
+                    <SelectItem value="bg-theme-dots">Modern Dots</SelectItem>
+                    <SelectItem value="bg-theme-grid">Technical Grid</SelectItem>
+                    <SelectItem value="bg-theme-cultural">Cultural / Traditional pattern</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-2">
