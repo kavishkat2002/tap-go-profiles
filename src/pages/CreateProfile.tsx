@@ -38,7 +38,7 @@ export default function CreateProfile() {
   const [form, setForm] = useState({
     name: "", slug: "", description: "", phone: "", whatsapp: "",
     email: "", website: "", address: "", facebook: "", instagram: "",
-    linkedin: "", twitter: "", services: "",
+    linkedin: "", twitter: "", services: "", theme: "theme-default"
   });
   const [menuCategories, setMenuCategories] = useState<MenuCategoryLocal[]>([]);
   const [profileImage, setProfileImage] = useState<{ file: File; preview: string } | null>(null);
@@ -132,6 +132,7 @@ export default function CreateProfile() {
         services: profileType === "business" && form.services
           ? form.services.split("\n").map((s) => s.trim()).filter(Boolean)
           : null,
+        theme: form.theme,
       });
 
       if (profileType === "restaurant") {
@@ -286,6 +287,23 @@ export default function CreateProfile() {
                 <div className="space-y-2">
                   <Label htmlFor="slug">URL Slug *</Label>
                   <Input id="slug" value={form.slug} onChange={set("slug")} placeholder="my-profile" required />
+                </div>
+              </div>
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Profile Theme (Color)</Label>
+                  <Select value={form.theme} onValueChange={(val) => setForm((f) => ({ ...f, theme: val }))}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Theme" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="theme-default">Default Theme</SelectItem>
+                      <SelectItem value="theme-blue">Blue Theme</SelectItem>
+                      <SelectItem value="theme-green">Green Theme</SelectItem>
+                      <SelectItem value="theme-rose">Rose Theme</SelectItem>
+                      <SelectItem value="theme-orange">Orange Theme</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 

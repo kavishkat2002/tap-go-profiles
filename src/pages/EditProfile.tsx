@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Smartphone, ArrowLeft, Plus, Trash2, Loader2, ImagePlus, X as XIcon, Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
@@ -73,6 +74,7 @@ export default function EditProfile() {
     name: "", description: "", phone: "", whatsapp: "",
     email: "", website: "", address: "", facebook: "",
     instagram: "", linkedin: "", twitter: "", services: "",
+    theme: "theme-default",
   });
   const [menuCategories, setMenuCategories] = useState<MenuCategoryLocal[]>([]);
   const [profileImage, setProfileImage] = useState<{ file: File | null; preview: string | null; deleted?: boolean }>({ file: null, preview: null });
@@ -94,6 +96,7 @@ export default function EditProfile() {
       linkedin: profile.linkedin ?? "",
       twitter: profile.twitter ?? "",
       services: (profile.services ?? []).join("\n"),
+      theme: profile.theme ?? "theme-default",
     });
     setProfileImage({ file: null, preview: profile.image_url ?? null, deleted: false });
     setCoverImage({ file: null, preview: profile.cover_url ?? null, deleted: false });
@@ -243,6 +246,7 @@ export default function EditProfile() {
         instagram: form.instagram || null,
         linkedin: form.linkedin || null,
         twitter: form.twitter || null,
+        theme: form.theme || "theme-default",
         services: profile.type === "business" && form.services
           ? form.services.split("\n").map((s) => s.trim()).filter(Boolean)
           : null,
@@ -426,9 +430,25 @@ export default function EditProfile() {
                   <Input id="name" value={form.name} onChange={set("name")} required />
                 </div>
                 <div className="space-y-2">
-                  <Label>URL Slug</Label>
-                  <Input value={profile.slug} disabled className="opacity-60 cursor-not-allowed" title="Slug cannot be changed" />
+                  <Label>Profile Theme (Color)</Label>
+                  <Select value={form.theme} onValueChange={(val) => setForm((f) => ({ ...f, theme: val }))}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Theme" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="theme-default">Default Theme</SelectItem>
+                      <SelectItem value="theme-blue">Blue Theme</SelectItem>
+                      <SelectItem value="theme-green">Green Theme</SelectItem>
+                      <SelectItem value="theme-rose">Rose Theme</SelectItem>
+                      <SelectItem value="theme-orange">Orange Theme</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label>URL Slug</Label>
+                <Input value={profile.slug} disabled className="opacity-60 cursor-not-allowed" title="Slug cannot be changed" />
               </div>
 
               <div className="space-y-2">

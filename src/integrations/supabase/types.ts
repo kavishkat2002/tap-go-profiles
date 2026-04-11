@@ -103,6 +103,7 @@ export type Database = {
           phone: string | null
           services: string[] | null
           slug: string
+          theme: string | null
           twitter: string | null
           type: Database["public"]["Enums"]["profile_type"]
           updated_at: string
@@ -126,6 +127,7 @@ export type Database = {
           phone?: string | null
           services?: string[] | null
           slug: string
+          theme?: string | null
           twitter?: string | null
           type?: Database["public"]["Enums"]["profile_type"]
           updated_at?: string
@@ -149,6 +151,7 @@ export type Database = {
           phone?: string | null
           services?: string[] | null
           slug?: string
+          theme?: string | null
           twitter?: string | null
           type?: Database["public"]["Enums"]["profile_type"]
           updated_at?: string

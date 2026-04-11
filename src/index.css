@@ -112,4 +112,28 @@
     backdrop-filter: blur(12px);
     background: hsla(0, 0%, 100%, 0.8);
   }
+  
+  .theme-default {
+    /* Uses base variables */
+  }
+  .theme-blue {
+    --primary: 221.2 83.2% 53.3%;
+    --ring: 221.2 83.2% 53.3%;
+    --hero-gradient: linear-gradient(135deg, hsl(222, 47%, 11%) 0%, hsl(220, 40%, 18%) 50%, hsl(221, 83%, 30%) 100%);
+  }
+  .theme-green {
+    --primary: 142.1 76.2% 36.3%;
+    --ring: 142.1 76.2% 36.3%;
+    --hero-gradient: linear-gradient(135deg, hsl(222, 47%, 11%) 0%, hsl(220, 40%, 18%) 50%, hsl(142, 76%, 20%) 100%);
+  }
+  .theme-rose {
+    --primary: 346.8 77.2% 49.8%;
+    --ring: 346.8 77.2% 49.8%;
+    --hero-gradient: linear-gradient(135deg, hsl(222, 47%, 11%) 0%, hsl(220, 40%, 18%) 50%, hsl(346, 77%, 30%) 100%);
+  }
+  .theme-orange {
+    --primary: 24.6 95% 53.1%;
+    --ring: 24.6 95% 53.1%;
+    --hero-gradient: linear-gradient(135deg, hsl(222, 47%, 11%) 0%, hsl(220, 40%, 18%) 50%, hsl(24, 95%, 30%) 100%);
+  }
 }

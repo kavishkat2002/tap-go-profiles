@@ -68,7 +68,7 @@ export default function RestaurantProfile() {
   const isOwner = !!user && profile.user_id === user.id;
 
   return (
-    <div className="min-h-screen bg-background p-4">
+    <div className={`min-h-screen bg-background p-4 ${profile.theme || ''}`}>
       <div className="max-w-lg mx-auto space-y-4">
         {/* ── Owner edit button ── */}
         {isOwner && (
