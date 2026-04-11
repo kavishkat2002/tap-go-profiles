@@ -8,17 +8,61 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Smartphone, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import type { ProfileType } from "@/lib/types";
+import { useAuth } from "@/hooks/useAuth";
+import { createProfile } from "@/lib/api";
+import { useQueryClient } from "@tanstack/react-query";
+
+type ProfileType = "personal" | "business" | "restaurant";
 
 export default function CreateProfile() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [profileType, setProfileType] = useState<ProfileType>("personal");
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [profileType, setProfileType] = useState<ProfileType>("personal");
+  const [loading, setLoading] = useState(false);
+  const [form, setForm] = useState({
+    name: "", slug: "", description: "", phone: "", whatsapp: "",
+    email: "", website: "", address: "", facebook: "", instagram: "",
+    linkedin: "", twitter: "", services: "",
+  });
+
+  const set = (key: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+    setForm((f) => ({ ...f, [key]: e.target.value }));
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({ title: "Profile created!", description: "Your profile is now live." });
-    navigate("/dashboard");
+    if (!user) return;
+    setLoading(true);
+    try {
+      await createProfile({
+        user_id: user.id,
+        type: profileType,
+        slug: form.slug.toLowerCase().replace(/\s+/g, "-"),
+        name: form.name,
+        description: form.description || null,
+        phone: form.phone || null,
+        whatsapp: form.whatsapp || null,
+        email: form.email || null,
+        website: form.website || null,
+        address: form.address || null,
+        facebook: form.facebook || null,
+        instagram: form.instagram || null,
+        linkedin: form.linkedin || null,
+        twitter: form.twitter || null,
+        services: profileType === "business" && form.services
+          ? form.services.split("\n").map((s) => s.trim()).filter(Boolean)
+          : null,
+      });
+      queryClient.invalidateQueries({ queryKey: ["user-profiles"] });
+      toast({ title: "Profile created!", description: "Your profile is now live." });
+      navigate("/dashboard");
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -58,44 +102,44 @@ export default function CreateProfile() {
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="name">Name *</Label>
-                  <Input id="name" placeholder={profileType === "restaurant" ? "Restaurant name" : profileType === "business" ? "Business name" : "Your name"} required />
+                  <Input id="name" value={form.name} onChange={set("name")} placeholder={profileType === "restaurant" ? "Restaurant name" : profileType === "business" ? "Business name" : "Your name"} required />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="slug">URL Slug *</Label>
-                  <Input id="slug" placeholder="my-profile" required />
+                  <Input id="slug" value={form.slug} onChange={set("slug")} placeholder="my-profile" required />
                 </div>
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="description">Description / Bio</Label>
-                <Textarea id="description" placeholder="Tell people about yourself or your business..." rows={3} />
+                <Textarea id="description" value={form.description} onChange={set("description")} placeholder="Tell people about yourself or your business..." rows={3} />
               </div>
 
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="phone">Phone</Label>
-                  <Input id="phone" type="tel" placeholder="+1234567890" />
+                  <Input id="phone" type="tel" value={form.phone} onChange={set("phone")} placeholder="+1234567890" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="whatsapp">WhatsApp</Label>
-                  <Input id="whatsapp" type="tel" placeholder="+1234567890" />
+                  <Input id="whatsapp" type="tel" value={form.whatsapp} onChange={set("whatsapp")} placeholder="+1234567890" />
                 </div>
               </div>
 
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" placeholder="hello@example.com" />
+                  <Input id="email" type="email" value={form.email} onChange={set("email")} placeholder="hello@example.com" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="website">Website</Label>
-                  <Input id="website" type="url" placeholder="https://example.com" />
+                  <Input id="website" type="url" value={form.website} onChange={set("website")} placeholder="https://example.com" />
                 </div>
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="address">Address</Label>
-                <Input id="address" placeholder="123 Main St, City" />
+                <Input id="address" value={form.address} onChange={set("address")} placeholder="123 Main St, City" />
               </div>
 
               <div className="border-t pt-5">
@@ -103,19 +147,19 @@ export default function CreateProfile() {
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="facebook">Facebook</Label>
-                    <Input id="facebook" placeholder="https://facebook.com/..." />
+                    <Input id="facebook" value={form.facebook} onChange={set("facebook")} placeholder="https://facebook.com/..." />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="instagram">Instagram</Label>
-                    <Input id="instagram" placeholder="https://instagram.com/..." />
+                    <Input id="instagram" value={form.instagram} onChange={set("instagram")} placeholder="https://instagram.com/..." />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="linkedin">LinkedIn</Label>
-                    <Input id="linkedin" placeholder="https://linkedin.com/in/..." />
+                    <Input id="linkedin" value={form.linkedin} onChange={set("linkedin")} placeholder="https://linkedin.com/in/..." />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="twitter">Twitter / X</Label>
-                    <Input id="twitter" placeholder="https://x.com/..." />
+                    <Input id="twitter" value={form.twitter} onChange={set("twitter")} placeholder="https://x.com/..." />
                   </div>
                 </div>
               </div>
@@ -123,7 +167,7 @@ export default function CreateProfile() {
               {profileType === "business" && (
                 <div className="border-t pt-5">
                   <h3 className="font-display font-semibold mb-3">Services</h3>
-                  <Textarea placeholder="Enter services, one per line" rows={4} />
+                  <Textarea value={form.services} onChange={set("services")} placeholder="Enter services, one per line" rows={4} />
                 </div>
               )}
 
@@ -136,7 +180,9 @@ export default function CreateProfile() {
                 </div>
               )}
 
-              <Button type="submit" className="w-full" size="lg">Create Profile</Button>
+              <Button type="submit" className="w-full" size="lg" disabled={loading}>
+                {loading ? "Creating..." : "Create Profile"}
+              </Button>
             </form>
           </CardContent>
         </Card>

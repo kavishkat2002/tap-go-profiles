@@ -1,4 +1,4 @@
-import type { Profile } from "./types";
+import type { Profile } from "./api";
 
 export function generateVCard(profile: Profile): string {
   const lines = [
