@@ -28,6 +28,7 @@ const BACKGROUNDS = [
   { id: "bg-theme-dots", name: "Dots", preview: "bg-[radial-gradient(#00000030_1px,transparent_1px)]" },
   { id: "bg-theme-grid", name: "Grid", preview: "bg-[linear-gradient(#00000020_1px,transparent_1px),linear-gradient(90deg,#00000020_1px,transparent_1px)]" },
   { id: "bg-theme-cultural", name: "Cultural", preview: "bg-primary/20" },
+  { id: "bg-theme-custom1", name: "Custom", preview: "bg-primary/30" },
 ];
 
 export default function ThemeDrawer({ profile }: { profile: any }) {

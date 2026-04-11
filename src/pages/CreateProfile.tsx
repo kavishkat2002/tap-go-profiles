@@ -316,7 +316,8 @@ export default function CreateProfile() {
                       <SelectItem value="bg-theme-default">Solid (Default)</SelectItem>
                       <SelectItem value="bg-theme-dots">Modern Dots</SelectItem>
                       <SelectItem value="bg-theme-grid">Technical Grid</SelectItem>
-                      <SelectItem value="bg-theme-cultural">Cultural / Traditional pattern</SelectItem>
+                      <SelectItem value="bg-theme-cultural">Cultural Pattern</SelectItem>
+                      <SelectItem value="bg-theme-custom1">Custom Pattern 1</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

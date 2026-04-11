@@ -153,7 +153,14 @@
   }
   .bg-theme-cultural {
     background-color: hsl(var(--background));
-    background-image: url('/cultural-bg.jpg');
+    background-image: url('/cultural-bg.png');
+    background-size: 300px;
+    background-attachment: fixed;
+    background-repeat: repeat;
+  }
+  .bg-theme-custom1 {
+    background-color: hsl(var(--background));
+    background-image: url('/custom-pattern-1.png');
     background-size: 300px;
     background-attachment: fixed;
     background-repeat: repeat;
