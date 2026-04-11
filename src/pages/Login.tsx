@@ -7,30 +7,46 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Smartphone } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Login() {
   const [searchParams] = useSearchParams();
   const defaultTab = searchParams.get("tab") === "signup" ? "signup" : "login";
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { signIn, signUp } = useAuth();
 
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [signupName, setSignupName] = useState("");
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Demo: just navigate to dashboard
-    toast({ title: "Welcome back!", description: "Logged in successfully." });
-    navigate("/dashboard");
+    setLoading(true);
+    const { error } = await signIn(loginEmail, loginPassword);
+    setLoading(false);
+    if (error) {
+      toast({ title: "Login failed", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Welcome back!" });
+      navigate("/dashboard");
+    }
   };
 
-  const handleSignup = (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({ title: "Account created!", description: "Welcome to SmartTap." });
-    navigate("/dashboard");
+    setLoading(true);
+    const { error } = await signUp(signupEmail, signupPassword, signupName);
+    setLoading(false);
+    if (error) {
+      toast({ title: "Signup failed", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Account created!", description: "Check your email to confirm, or log in now." });
+      navigate("/dashboard");
+    }
   };
 
   return (
@@ -63,7 +79,9 @@ export default function Login() {
                     <Label htmlFor="login-password">Password</Label>
                     <Input id="login-password" type="password" placeholder="••••••••" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} required />
                   </div>
-                  <Button type="submit" className="w-full">Log In</Button>
+                  <Button type="submit" className="w-full" disabled={loading}>
+                    {loading ? "Logging in..." : "Log In"}
+                  </Button>
                 </form>
               </CardContent>
             </TabsContent>
@@ -85,7 +103,9 @@ export default function Login() {
                     <Label htmlFor="signup-password">Password</Label>
                     <Input id="signup-password" type="password" placeholder="••••••••" value={signupPassword} onChange={(e) => setSignupPassword(e.target.value)} required />
                   </div>
-                  <Button type="submit" className="w-full">Create Account</Button>
+                  <Button type="submit" className="w-full" disabled={loading}>
+                    {loading ? "Creating account..." : "Create Account"}
+                  </Button>
                 </form>
               </CardContent>
             </TabsContent>

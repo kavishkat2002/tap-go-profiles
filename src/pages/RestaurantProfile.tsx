@@ -1,15 +1,40 @@
 import { useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Phone, MessageCircle, Mail, MapPin, UtensilsCrossed } from "lucide-react";
-import { DEMO_PROFILES } from "@/lib/types";
+import { Phone, MessageCircle, Mail, MapPin, UtensilsCrossed, Loader2 } from "lucide-react";
+import { fetchProfileBySlug, fetchMenuForProfile, incrementViews } from "@/lib/api";
+import { useEffect } from "react";
 
 export default function RestaurantProfile() {
   const { restaurant } = useParams();
-  const profile = DEMO_PROFILES.find((p) => p.slug === restaurant && p.type === "restaurant");
 
-  if (!profile) {
+  const { data: profile, isLoading } = useQuery({
+    queryKey: ["profile", restaurant],
+    queryFn: () => fetchProfileBySlug(restaurant!),
+    enabled: !!restaurant,
+  });
+
+  const { data: categories = [] } = useQuery({
+    queryKey: ["menu", profile?.id],
+    queryFn: () => fetchMenuForProfile(profile!.id),
+    enabled: !!profile,
+  });
+
+  useEffect(() => {
+    if (restaurant) incrementViews(restaurant);
+  }, [restaurant]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!profile || profile.type !== "restaurant") {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <p className="text-muted-foreground">Restaurant not found.</p>
@@ -17,12 +42,9 @@ export default function RestaurantProfile() {
     );
   }
 
-  const categories = profile.menuCategories ?? [];
-
   return (
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-lg mx-auto space-y-4">
-        {/* Header */}
         <Card className="card-elevated overflow-hidden">
           <div className="hero-gradient h-32" />
           <CardContent className="relative -mt-10 pb-6">
@@ -39,7 +61,6 @@ export default function RestaurantProfile() {
           </CardContent>
         </Card>
 
-        {/* Contact */}
         <Card className="card-elevated">
           <CardContent className="p-4 grid grid-cols-3 gap-2">
             {profile.phone && (
@@ -69,7 +90,6 @@ export default function RestaurantProfile() {
           </CardContent>
         </Card>
 
-        {/* Menu */}
         {categories.length > 0 && (
           <Card className="card-elevated">
             <CardContent className="p-5">
@@ -91,7 +111,7 @@ export default function RestaurantProfile() {
                           )}
                         </div>
                         <span className="font-display font-semibold text-primary text-sm ml-3">
-                          ${item.price.toFixed(2)}
+                          ${Number(item.price).toFixed(2)}
                         </span>
                       </div>
                     ))}

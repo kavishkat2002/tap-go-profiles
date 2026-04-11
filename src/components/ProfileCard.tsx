@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Eye, User, Store, UtensilsCrossed } from "lucide-react";
-import type { Profile } from "@/lib/types";
+import type { Profile } from "@/lib/api";
 
 const typeConfig = {
   personal: { icon: User, label: "Personal", path: "/u/" },

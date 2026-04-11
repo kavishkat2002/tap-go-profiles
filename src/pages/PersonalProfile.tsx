@@ -1,15 +1,34 @@
 import { useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Phone, MessageCircle, Mail, Globe, Facebook, Instagram, Linkedin, Twitter, Download, User } from "lucide-react";
-import { DEMO_PROFILES } from "@/lib/types";
+import { Phone, MessageCircle, Mail, Globe, Facebook, Instagram, Linkedin, Twitter, Download, User, Loader2 } from "lucide-react";
+import { fetchProfileBySlug, incrementViews } from "@/lib/api";
 import { downloadVCard } from "@/lib/vcard";
+import { useEffect } from "react";
 
 export default function PersonalProfile() {
   const { username } = useParams();
-  const profile = DEMO_PROFILES.find((p) => p.slug === username && p.type === "personal");
 
-  if (!profile) {
+  const { data: profile, isLoading } = useQuery({
+    queryKey: ["profile", username],
+    queryFn: () => fetchProfileBySlug(username!),
+    enabled: !!username,
+  });
+
+  useEffect(() => {
+    if (username) incrementViews(username);
+  }, [username]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!profile || profile.type !== "personal") {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <p className="text-muted-foreground">Profile not found.</p>
@@ -18,11 +37,21 @@ export default function PersonalProfile() {
   }
 
   const socialIcons = [
-    { key: "facebook", icon: Facebook, url: profile.socialLinks?.facebook },
-    { key: "instagram", icon: Instagram, url: profile.socialLinks?.instagram },
-    { key: "linkedin", icon: Linkedin, url: profile.socialLinks?.linkedin },
-    { key: "twitter", icon: Twitter, url: profile.socialLinks?.twitter },
+    { key: "facebook", icon: Facebook, url: profile.facebook },
+    { key: "instagram", icon: Instagram, url: profile.instagram },
+    { key: "linkedin", icon: Linkedin, url: profile.linkedin },
+    { key: "twitter", icon: Twitter, url: profile.twitter },
   ].filter((s) => s.url);
+
+  const vcardProfile = {
+    ...profile,
+    socialLinks: {
+      facebook: profile.facebook ?? undefined,
+      instagram: profile.instagram ?? undefined,
+      linkedin: profile.linkedin ?? undefined,
+      twitter: profile.twitter ?? undefined,
+    },
+  };
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -35,7 +64,6 @@ export default function PersonalProfile() {
           <h1 className="font-display text-xl font-bold">{profile.name}</h1>
           <p className="text-sm text-muted-foreground mt-1 mb-5">{profile.description}</p>
 
-          {/* Contact buttons */}
           <div className="grid grid-cols-3 gap-2 mb-5">
             {profile.phone && (
               <a href={`tel:${profile.phone}`}>
@@ -69,11 +97,10 @@ export default function PersonalProfile() {
             </a>
           )}
 
-          {/* Social */}
           {socialIcons.length > 0 && (
             <div className="flex justify-center gap-3 mb-5">
               {socialIcons.map(({ key, icon: Icon, url }) => (
-                <a key={key} href={url} target="_blank" rel="noopener noreferrer">
+                <a key={key} href={url!} target="_blank" rel="noopener noreferrer">
                   <Button variant="secondary" size="icon" className="rounded-full">
                     <Icon className="h-4 w-4" />
                   </Button>
@@ -82,7 +109,7 @@ export default function PersonalProfile() {
             </div>
           )}
 
-          <Button className="w-full" onClick={() => downloadVCard(profile)}>
+          <Button className="w-full" onClick={() => downloadVCard(vcardProfile as any)}>
             <Download className="h-4 w-4 mr-2" /> Save Contact
           </Button>
         </CardContent>
