@@ -14,16 +14,160 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      menu_categories: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          profile_id: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          profile_id: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          profile_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "menu_categories_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      menu_items: {
+        Row: {
+          category_id: string
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          name: string
+          price: number
+          sort_order: number
+        }
+        Insert: {
+          category_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name: string
+          price?: number
+          sort_order?: number
+        }
+        Update: {
+          category_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          price?: number
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "menu_items_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "menu_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          address: string | null
+          created_at: string
+          description: string | null
+          email: string | null
+          facebook: string | null
+          id: string
+          image_url: string | null
+          instagram: string | null
+          linkedin: string | null
+          name: string
+          phone: string | null
+          services: string[] | null
+          slug: string
+          twitter: string | null
+          type: Database["public"]["Enums"]["profile_type"]
+          updated_at: string
+          user_id: string
+          views: number
+          website: string | null
+          whatsapp: string | null
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          facebook?: string | null
+          id?: string
+          image_url?: string | null
+          instagram?: string | null
+          linkedin?: string | null
+          name: string
+          phone?: string | null
+          services?: string[] | null
+          slug: string
+          twitter?: string | null
+          type?: Database["public"]["Enums"]["profile_type"]
+          updated_at?: string
+          user_id: string
+          views?: number
+          website?: string | null
+          whatsapp?: string | null
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          facebook?: string | null
+          id?: string
+          image_url?: string | null
+          instagram?: string | null
+          linkedin?: string | null
+          name?: string
+          phone?: string | null
+          services?: string[] | null
+          slug?: string
+          twitter?: string | null
+          type?: Database["public"]["Enums"]["profile_type"]
+          updated_at?: string
+          user_id?: string
+          views?: number
+          website?: string | null
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      increment_profile_views: {
+        Args: { profile_slug: string }
+        Returns: undefined
+      }
     }
     Enums: {
-      [_ in never]: never
+      profile_type: "personal" | "business" | "restaurant"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +294,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      profile_type: ["personal", "business", "restaurant"],
+    },
   },
 } as const
