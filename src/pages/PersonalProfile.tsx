@@ -7,6 +7,7 @@ import { fetchProfileBySlug, incrementViews } from "@/lib/api";
 import { downloadVCard } from "@/lib/vcard";
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
+import VerifiedBadge from "@/components/VerifiedBadge";
 
 export default function PersonalProfile() {
   const { username } = useParams();
@@ -85,7 +86,10 @@ export default function PersonalProfile() {
               <User className="h-10 w-10 text-primary" />
             </div>
           )}
-          <h1 className="font-display text-xl font-bold">{profile.name}</h1>
+          <h1 className="font-display text-xl font-bold flex items-center justify-center gap-1.5">
+            {profile.name}
+            <VerifiedBadge />
+          </h1>
           <p className="text-sm text-muted-foreground mt-1 mb-5">{profile.description}</p>
 
           <div className="grid grid-cols-3 gap-2 mb-5">

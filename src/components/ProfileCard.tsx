@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Eye, User, Store, UtensilsCrossed } from "lucide-react";
 import type { Profile } from "@/lib/api";
+import VerifiedBadge from "@/components/VerifiedBadge";
 
 const typeConfig = {
   personal: { icon: User, label: "Personal", path: "/u/" },
@@ -24,7 +25,10 @@ export default function ProfileCard({ profile }: { profile: Profile }) {
             </div>
             <Badge variant="secondary" className="text-xs">{config.label}</Badge>
           </div>
-          <h3 className="font-display font-semibold text-foreground mb-1">{profile.name}</h3>
+          <h3 className="font-display font-semibold text-foreground mb-1 flex items-center gap-1">
+            {profile.name}
+            <VerifiedBadge className="h-4 w-4 text-[#0095F6]" />
+          </h3>
           <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{profile.description}</p>
           <div className="flex items-center gap-1 text-xs text-muted-foreground">
             <Eye className="h-3 w-3" />

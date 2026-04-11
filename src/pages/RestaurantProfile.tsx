@@ -11,6 +11,7 @@ import {
 import { fetchProfileBySlug, fetchMenuForProfile, incrementViews } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
+import VerifiedBadge from "@/components/VerifiedBadge";
 
 export default function RestaurantProfile() {
   const { restaurant } = useParams();
@@ -99,7 +100,10 @@ export default function RestaurantProfile() {
                 <UtensilsCrossed className="h-8 w-8 text-primary" />
               </div>
             )}
-            <h1 className="font-display text-2xl font-bold">{profile.name}</h1>
+            <h1 className="font-display text-2xl font-bold flex items-center gap-1.5">
+              {profile.name}
+              <VerifiedBadge />
+            </h1>
             {profile.description && (
               <p className="text-sm text-muted-foreground mt-1">{profile.description}</p>
             )}
