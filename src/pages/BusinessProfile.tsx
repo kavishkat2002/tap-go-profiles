@@ -11,6 +11,7 @@ import { fetchProfileBySlug, incrementViews } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
 import VerifiedBadge from "@/components/VerifiedBadge";
+import ThemeDrawer from "@/components/ThemeDrawer";
 
 export default function BusinessProfile() {
   const { business } = useParams();
@@ -59,11 +60,12 @@ export default function BusinessProfile() {
   const isOwner = !!user && profile.user_id === user.id;
 
   return (
-    <div className={`min-h-screen bg-background p-4 ${profile.bg_theme || ''} ${profile.theme || ''}`}>
+    <div id="profile-wrapper" className={`min-h-screen bg-background p-4 ${profile.bg_theme || ''} ${profile.theme || ''}`}>
       <div className="max-w-lg mx-auto space-y-4">
         {/* ── Owner edit button ── */}
         {isOwner && (
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-2">
+            <ThemeDrawer profile={profile} />
             <Button asChild size="sm" variant="outline">
               <Link to={`/edit/${profile.slug}`}>
                 <Pencil className="h-4 w-4 mr-2" /> Edit Profile

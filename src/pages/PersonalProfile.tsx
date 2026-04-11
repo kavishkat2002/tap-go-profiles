@@ -8,6 +8,7 @@ import { downloadVCard } from "@/lib/vcard";
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
 import VerifiedBadge from "@/components/VerifiedBadge";
+import ThemeDrawer from "@/components/ThemeDrawer";
 
 export default function PersonalProfile() {
   const { username } = useParams();
@@ -57,10 +58,11 @@ export default function PersonalProfile() {
   };
 
   return (
-    <div className={`min-h-screen bg-background flex flex-col items-center justify-center p-4 gap-3 ${profile.bg_theme || ''} ${profile.theme || ''}`}>
+    <div id="profile-wrapper" className={`min-h-screen bg-background flex flex-col items-center justify-center p-4 gap-3 ${profile.bg_theme || ''} ${profile.theme || ''}`}>
       {/* ── Owner edit button ── */}
       {!!user && profile.user_id === user.id && (
-        <div className="w-full max-w-sm flex justify-end">
+        <div className="w-full max-w-sm flex justify-end gap-2">
+          <ThemeDrawer profile={profile} />
           <Button asChild size="sm" variant="outline">
             <Link to={`/edit/${profile.slug}`}>
               <Pencil className="h-4 w-4 mr-2" /> Edit Profile
