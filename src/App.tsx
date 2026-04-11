@@ -3,8 +3,14 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import Index from "./pages/Index.tsx";
-import NotFound from "./pages/NotFound.tsx";
+import Index from "./pages/Index";
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
+import CreateProfile from "./pages/CreateProfile";
+import PersonalProfile from "./pages/PersonalProfile";
+import BusinessProfile from "./pages/BusinessProfile";
+import RestaurantProfile from "./pages/RestaurantProfile";
+import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
@@ -16,7 +22,12 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/create-profile" element={<CreateProfile />} />
+          <Route path="/u/:username" element={<PersonalProfile />} />
+          <Route path="/b/:business" element={<BusinessProfile />} />
+          <Route path="/r/:restaurant" element={<RestaurantProfile />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
