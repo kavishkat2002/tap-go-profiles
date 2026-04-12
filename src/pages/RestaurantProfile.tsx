@@ -22,13 +22,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import ProfileFooter from "@/components/ProfileFooter";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function RestaurantProfile() {
   const { restaurant } = useParams();
   const { user } = useAuth();
   const { toast } = useToast();
 
-  const { data: profile, isLoading } = useQuery({
+  const { data: profile, isLoading, refetch: refetchProfile } = useQuery({
     queryKey: ["profile", restaurant],
     queryFn: () => fetchProfileBySlug(restaurant!),
     enabled: !!restaurant,
@@ -39,6 +40,34 @@ export default function RestaurantProfile() {
     queryFn: () => fetchMenuForProfile(profile!.id),
     enabled: !!profile,
   });
+
+  // Listen for real-time updates to status (blocking/unblocking)
+  useEffect(() => {
+    if (!profile?.id) return;
+
+    const channel = supabase
+      .channel(`profile-status-${profile.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'profiles',
+          filter: `id=eq.${profile.id}`,
+        },
+        (payload) => {
+          // If the blocked status changed, refetch the profile
+          if (payload.new.is_blocked !== payload.old.is_blocked) {
+            refetchProfile();
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [profile?.id, refetchProfile]);
 
   const [cart, setCart] = useState<Record<string, { item: any; quantity: number }>>({});
   const [tableNumber, setTableNumber] = useState("");

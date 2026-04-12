@@ -14,16 +14,44 @@ import VerifiedBadge from "@/components/VerifiedBadge";
 import ThemeDrawer from "@/components/ThemeDrawer";
 import SuspendedView from "@/components/SuspendedView";
 import ProfileFooter from "@/components/ProfileFooter";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function BusinessProfile() {
   const { business } = useParams();
   const { user } = useAuth();
 
-  const { data: profile, isLoading } = useQuery({
+  const { data: profile, isLoading, refetch: refetchProfile } = useQuery({
     queryKey: ["profile", business],
     queryFn: () => fetchProfileBySlug(business!),
     enabled: !!business,
   });
+
+  // Listen for real-time updates to status (blocking/unblocking)
+  useEffect(() => {
+    if (!profile?.id) return;
+
+    const channel = supabase
+      .channel(`profile-status-${profile.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'profiles',
+          filter: `id=eq.${profile.id}`,
+        },
+        (payload) => {
+          if (payload.new.is_blocked !== payload.old.is_blocked) {
+            refetchProfile();
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [profile?.id, refetchProfile]);
 
   useEffect(() => {
     if (business) incrementViews(business);
