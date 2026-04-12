@@ -96,6 +96,7 @@ export type Database = {
           description: string | null
           email: string | null
           facebook: string | null
+          google_review_url: string | null
           id: string
           image_url: string | null
           instagram: string | null
@@ -121,6 +122,7 @@ export type Database = {
           description?: string | null
           email?: string | null
           facebook?: string | null
+          google_review_url?: string | null
           id?: string
           image_url?: string | null
           instagram?: string | null
@@ -146,6 +148,7 @@ export type Database = {
           description?: string | null
           email?: string | null
           facebook?: string | null
+          google_review_url?: string | null
           id?: string
           image_url?: string | null
           instagram?: string | null
