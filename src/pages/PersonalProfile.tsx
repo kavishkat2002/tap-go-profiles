@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import ThemeDrawer from "@/components/ThemeDrawer";
+import SuspendedView from "@/components/SuspendedView";
 import ProfileFooter from "@/components/ProfileFooter";
 
 export default function PersonalProfile() {
@@ -39,6 +40,10 @@ export default function PersonalProfile() {
         <p className="text-muted-foreground">Profile not found.</p>
       </div>
     );
+  }
+
+  if ((profile as any).is_blocked) {
+    return <SuspendedView />;
   }
 
   const socialIcons = [

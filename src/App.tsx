@@ -13,6 +13,8 @@ import BusinessProfile from "./pages/BusinessProfile";
 import RestaurantProfile from "./pages/RestaurantProfile";
 import NotFound from "./pages/NotFound";
 import EditProfile from "./pages/EditProfile";
+import Admin from "./pages/Admin";
+import Orders from "./pages/Orders";
 
 const queryClient = new QueryClient();
 
@@ -26,7 +28,9 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/admin" element={<Admin />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/orders/:slug" element={<Orders />} />
             <Route path="/create-profile" element={<CreateProfile />} />
             <Route path="/u/:username" element={<PersonalProfile />} />
             <Route path="/b/:business" element={<BusinessProfile />} />

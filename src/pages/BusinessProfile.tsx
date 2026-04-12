@@ -12,6 +12,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import ThemeDrawer from "@/components/ThemeDrawer";
+import SuspendedView from "@/components/SuspendedView";
 import ProfileFooter from "@/components/ProfileFooter";
 
 export default function BusinessProfile() {
@@ -42,6 +43,10 @@ export default function BusinessProfile() {
         <p className="text-muted-foreground">Business not found.</p>
       </div>
     );
+  }
+
+  if ((profile as any).is_blocked) {
+    return <SuspendedView />;
   }
 
   const contactButtons = [

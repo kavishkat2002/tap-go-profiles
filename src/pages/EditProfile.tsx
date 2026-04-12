@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Smartphone, ArrowLeft, Plus, Trash2, Loader2, ImagePlus, X as XIcon, Save } from "lucide-react";
+import { Smartphone, ArrowLeft, Plus, Trash2, Loader2, ImagePlus, X as XIcon, Save, Ban } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import {
@@ -126,6 +126,33 @@ export default function EditProfile() {
 
   // Guard: not the owner
   const isOwner = !!user && !!profile && profile.user_id === user.id;
+  const isBlocked = (profile as any)?.is_blocked === true;
+
+  if (profile && !profileLoading && !isOwner) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50">
+        <Card className="max-w-md w-full text-center p-8">
+            <XIcon className="h-12 w-12 text-destructive mx-auto mb-4" />
+            <h1 className="text-xl font-bold mb-2">Access Unauthorized</h1>
+            <p className="text-muted-foreground mb-6">You don't have permission to edit this profile.</p>
+            <Button asChild className="w-full"><Link to="/dashboard">Back to Dashboard</Link></Button>
+        </Card>
+      </div>
+    );
+  }
+
+  if (isBlocked) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50">
+        <Card className="max-w-md w-full text-center p-8 border-destructive/20 bg-destructive/5 backdrop-blur-sm">
+            <Ban className="h-12 w-12 text-destructive mx-auto mb-4 animate-pulse" />
+            <h1 className="text-xl font-bold mb-2">Editor Locked</h1>
+            <p className="text-muted-foreground mb-6">This account is currently suspended. You cannot make any changes until the suspension is lifted.</p>
+            <Button asChild variant="outline" className="w-full"><Link to="/dashboard">Return to Dashboard</Link></Button>
+        </Card>
+      </div>
+    );
+  }
 
   const set = (key: string) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>

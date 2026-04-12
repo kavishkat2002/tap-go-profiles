@@ -136,3 +136,44 @@ export async function createOrder(order: any) {
   if (error) throw error;
   return data;
 }
+
+// ─── admin ───────────────────────────────────────────────────────────────────
+
+export async function fetchAllProfiles() {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("*")
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data;
+}
+
+export async function fetchAllOrders() {
+  const { data, error } = await supabase
+    .from("orders")
+    .select("*, profiles(name, slug)")
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data;
+}
+
+export async function updateOrderStatus(orderId: string, status: string) {
+  const { data, error } = await supabase
+    .from("orders")
+    .update({ status })
+    .eq("id", orderId)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+export async function fetchOrdersByProfileId(profileId: string) {
+  const { data, error } = await supabase
+    .from("orders")
+    .select("*")
+    .eq("profile_id", profileId)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data;
+}

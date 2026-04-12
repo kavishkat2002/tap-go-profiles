@@ -15,6 +15,7 @@ import { useState, useEffect } from "react";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import ThemeDrawer from "@/components/ThemeDrawer";
 import { useToast } from "@/hooks/use-toast";
+import SuspendedView from "@/components/SuspendedView";
 import { 
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger 
 } from "@/components/ui/dialog";
@@ -65,6 +66,10 @@ export default function RestaurantProfile() {
         <p className="text-muted-foreground">Restaurant not found.</p>
       </div>
     );
+  }
+
+  if ((profile as any).is_blocked) {
+    return <SuspendedView />;
   }
 
   const addToCart = (item: any) => {

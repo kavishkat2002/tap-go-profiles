@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Smartphone, Plus, Eye, QrCode, LogOut, Loader2 } from "lucide-react";
+import { Smartphone, Plus, Eye, QrCode, LogOut, Loader2, ShoppingBag } from "lucide-react";
 import ProfileCard from "@/components/ProfileCard";
 import QRCodeDisplay from "@/components/QRCodeDisplay";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -51,9 +51,20 @@ export default function Dashboard() {
             <Smartphone className="h-6 w-6 text-primary" />
             SmartTap
           </Link>
-          <Button variant="ghost" size="sm" onClick={handleLogout}>
-            <LogOut className="h-4 w-4 mr-2" /> Logout
-          </Button>
+          <div className="flex items-center gap-3">
+            {[
+              "kavishkat2002@gmail.com",
+              "kavishka.social@gmail.com",
+              "tkavishka101@gmail.com"
+            ].includes(user?.email?.toLowerCase() || "") && (
+              <Button variant="outline" size="sm" asChild className="hidden sm:flex">
+                <Link to="/admin">Admin Console</Link>
+              </Button>
+            )}
+            <Button variant="ghost" size="sm" onClick={handleLogout}>
+              <LogOut className="h-4 w-4 mr-2" /> Logout
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -129,29 +140,39 @@ export default function Dashboard() {
                 {profiles.map((p) => (
                   <div key={p.id} className="relative group">
                     <ProfileCard profile={p} />
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button size="icon" variant="secondary" className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8">
-                          <QrCode className="h-4 w-4" />
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="sm:max-w-sm">
-                        <DialogHeader>
-                          <DialogTitle className="font-display">QR Code — {p.name}</DialogTitle>
-                        </DialogHeader>
-                        <div className="flex flex-col items-center gap-4 py-4">
-                          <QRCodeDisplay url={`${baseUrl}${pathFor(p)}`} />
-                          <div className="text-center">
-                            <p className="text-xs text-muted-foreground mt-2">
-                              <strong>NFC:</strong> Write this URL to your NFC tag:
-                            </p>
-                            <code className="text-xs bg-muted px-2 py-1 rounded mt-1 block break-all">
-                              {baseUrl}{pathFor(p)}
-                            </code>
+                    <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button size="icon" variant="secondary" className="h-8 w-8 shadow-sm">
+                            <QrCode className="h-4 w-4" />
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-sm">
+                          <DialogHeader>
+                            <DialogTitle className="font-display">QR Code — {p.name}</DialogTitle>
+                          </DialogHeader>
+                          <div className="flex flex-col items-center gap-4 py-4">
+                            <QRCodeDisplay url={`${baseUrl}${pathFor(p)}`} />
+                            <div className="text-center">
+                              <p className="text-xs text-muted-foreground mt-2">
+                                <strong>NFC:</strong> Write this URL to your NFC tag:
+                              </p>
+                              <code className="text-xs bg-muted px-2 py-1 rounded mt-1 block break-all">
+                                {baseUrl}{pathFor(p)}
+                              </code>
+                            </div>
                           </div>
-                        </div>
-                      </DialogContent>
-                    </Dialog>
+                        </DialogContent>
+                      </Dialog>
+                      
+                      {p.type === 'restaurant' && (
+                        <Button size="icon" variant="secondary" asChild className="h-8 w-8 shadow-sm bg-primary/10 hover:bg-primary/20 text-primary border-none">
+                          <Link to={`/orders/${p.slug}`} title="Manage Orders">
+                            <ShoppingBag className="h-4 w-4" />
+                          </Link>
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
