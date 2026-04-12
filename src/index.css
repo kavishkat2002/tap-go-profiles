@@ -96,6 +96,12 @@
   /* Ensure smooth scrolling & proper mobile viewport */
   html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+  body {
+    overflow-x: hidden;
+    max-width: 100vw;
   }
   button, a {
     touch-action: manipulation;

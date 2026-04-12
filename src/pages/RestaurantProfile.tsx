@@ -131,12 +131,9 @@ export default function RestaurantProfile() {
   return (
     <div
       id="profile-wrapper"
-      className={`min-h-screen w-full px-3 sm:px-4 pb-28 pt-5 sm:pt-8 flex flex-col items-center ${profile.bg_theme || ''} ${profile.theme || ''}`}
+      className={`min-h-screen w-full overflow-x-hidden px-3 sm:px-4 pb-28 pt-5 sm:pt-8 flex flex-col items-center ${profile.bg_theme || ''} ${profile.theme || ''}`}
     >
-      <div className="w-full max-w-md sm:max-w-lg space-y-4 sm:space-y-6 relative">
-        {/* Decorative blobs */}
-        <div className="absolute -top-16 -left-16 w-48 sm:w-64 h-48 sm:h-64 bg-primary/10 rounded-full blur-3xl -z-10 animate-pulse pointer-events-none" />
-        <div className="absolute -bottom-16 -right-16 w-48 sm:w-64 h-48 sm:h-64 bg-accent/10 rounded-full blur-3xl -z-10 animate-pulse pointer-events-none" />
+      <div className="w-full max-w-md sm:max-w-lg space-y-4 sm:space-y-6">
 
         {/* Owner actions */}
         {isOwner && (

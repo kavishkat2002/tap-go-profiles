@@ -60,11 +60,11 @@ export default function PersonalProfile() {
   return (
     <div
       id="profile-wrapper"
-      className={`min-h-screen w-full flex flex-col items-center justify-start sm:justify-center px-3 sm:px-4 py-6 sm:py-8 gap-4 sm:gap-6 relative ${profile.bg_theme || ''} ${profile.theme || ''}`}
+      className={`min-h-screen w-full overflow-x-hidden flex flex-col items-center justify-start sm:justify-center px-3 sm:px-4 py-6 sm:py-8 gap-4 sm:gap-6 relative ${profile.bg_theme || ''} ${profile.theme || ''}`}
     >
-      {/* Decorative blobs */}
-      <div className="absolute top-1/4 left-0 w-48 sm:w-64 h-48 sm:h-64 bg-primary/10 rounded-full blur-3xl -z-10 animate-pulse pointer-events-none" />
-      <div className="absolute bottom-1/4 right-0 w-48 sm:w-64 h-48 sm:h-64 bg-accent/10 rounded-full blur-3xl -z-10 animate-pulse pointer-events-none" />
+      {/* Decorative blobs — clipped inside overflow-x-hidden parent */}
+      <div className="fixed top-1/4 -left-12 w-40 h-40 bg-primary/10 rounded-full blur-3xl -z-10 animate-pulse pointer-events-none" />
+      <div className="fixed bottom-1/4 -right-12 w-40 h-40 bg-accent/10 rounded-full blur-3xl -z-10 animate-pulse pointer-events-none" />
 
       {/* Owner actions */}
       {!!user && profile.user_id === user.id && (
