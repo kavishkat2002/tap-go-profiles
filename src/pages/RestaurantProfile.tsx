@@ -16,7 +16,7 @@ import VerifiedBadge from "@/components/VerifiedBadge";
 import ThemeDrawer from "@/components/ThemeDrawer";
 import { useToast } from "@/hooks/use-toast";
 import { 
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger 
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger 
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -38,7 +38,6 @@ export default function RestaurantProfile() {
     enabled: !!profile,
   });
 
-  // Ordering State
   const [cart, setCart] = useState<Record<string, { item: any; quantity: number }>>({});
   const [tableNumber, setTableNumber] = useState("");
   const [ordering, setOrdering] = useState(false);
@@ -114,10 +113,10 @@ export default function RestaurantProfile() {
   };
 
   const contactButtons = [
-    profile.phone    && { href: `tel:${profile.phone}`,                              icon: <Phone className="h-5 w-5 text-primary" />,          label: "Call" },
-    profile.whatsapp && { href: `https://wa.me/${profile.whatsapp.replace(/\+/g,"")}`, icon: <MessageCircle className="h-5 w-5 text-primary" />,    label: "WhatsApp", external: true },
-    profile.email    && { href: `mailto:${profile.email}`,                            icon: <Mail className="h-5 w-5 text-primary" />,            label: "Email" },
-    profile.website  && { href: profile.website,                                      icon: <Globe className="h-5 w-5 text-primary" />,           label: "Website", external: true },
+    profile.phone    && { href: `tel:${profile.phone}`,                              icon: <Phone className="h-5 w-5 text-primary" />,       label: "Call" },
+    profile.whatsapp && { href: `https://wa.me/${profile.whatsapp.replace(/\+/g,"")}`, icon: <MessageCircle className="h-5 w-5 text-primary" />, label: "WhatsApp", external: true },
+    profile.email    && { href: `mailto:${profile.email}`,                            icon: <Mail className="h-5 w-5 text-primary" />,         label: "Email" },
+    profile.website  && { href: profile.website,                                      icon: <Globe className="h-5 w-5 text-primary" />,        label: "Website", external: true },
   ].filter(Boolean) as { href: string; icon: React.ReactNode; label: string; external?: boolean }[];
 
   const socials = [
@@ -130,49 +129,70 @@ export default function RestaurantProfile() {
   const isOwner = !!user && profile.user_id === user.id;
 
   return (
-    <div id="profile-wrapper" className={`min-h-screen p-4 flex flex-col items-center pt-8 ${profile.bg_theme || ''} ${profile.theme || ''}`}>
-      <div className="w-full max-w-lg space-y-6 relative">
-        <div className="absolute -top-20 -left-20 w-64 h-64 bg-primary/10 rounded-full blur-3xl -z-10 animate-pulse" />
-        <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-accent/10 rounded-full blur-3xl -z-10 animate-pulse" />
+    <div
+      id="profile-wrapper"
+      className={`min-h-screen w-full px-3 sm:px-4 pb-28 pt-5 sm:pt-8 flex flex-col items-center ${profile.bg_theme || ''} ${profile.theme || ''}`}
+    >
+      <div className="w-full max-w-md sm:max-w-lg space-y-4 sm:space-y-6 relative">
+        {/* Decorative blobs */}
+        <div className="absolute -top-16 -left-16 w-48 sm:w-64 h-48 sm:h-64 bg-primary/10 rounded-full blur-3xl -z-10 animate-pulse pointer-events-none" />
+        <div className="absolute -bottom-16 -right-16 w-48 sm:w-64 h-48 sm:h-64 bg-accent/10 rounded-full blur-3xl -z-10 animate-pulse pointer-events-none" />
 
+        {/* Owner actions */}
         {isOwner && (
           <div className="flex justify-end gap-2">
             <ThemeDrawer profile={profile} />
-            <Button asChild size="sm" variant="outline">
+            <Button asChild size="sm" variant="outline" className="text-xs sm:text-sm">
               <Link to={`/edit/${profile.slug}`}>
-                <Pencil className="h-4 w-4 mr-2" /> Edit Profile
+                <Pencil className="h-3.5 w-3.5 mr-1.5" /> Edit
               </Link>
             </Button>
           </div>
         )}
 
-        {/* Hero Card with Gallery */}
+        {/* ── Hero card ── */}
         <Card className="card-artistic overflow-hidden">
+          {/* Cover */}
           {profile.cover_url ? (
-            <img src={profile.cover_url} alt="Cover" className="h-32 w-full object-cover" />
+            <img src={profile.cover_url} alt="Cover" className="h-28 sm:h-36 w-full object-cover" />
           ) : (
-            <div className="hero-gradient h-32" />
+            <div className="hero-gradient h-28 sm:h-36" />
           )}
-          <CardContent className="relative -mt-10 pb-6">
+
+          <CardContent className="relative -mt-10 sm:-mt-12 px-4 sm:px-6 pb-5 sm:pb-6">
+            {/* Avatar */}
             {profile.image_url ? (
-              <img src={profile.image_url} alt={profile.name} className="h-20 w-20 rounded-xl object-cover border-4 border-card mb-3 shadow" />
+              <img
+                src={profile.image_url}
+                alt={profile.name}
+                className="h-18 w-18 sm:h-20 sm:w-20 rounded-xl object-cover border-4 border-card mb-3 shadow"
+                style={{ height: 72, width: 72 }}
+              />
             ) : (
-              <div className="h-16 w-16 rounded-xl bg-primary/20 border-4 border-card flex items-center justify-center mb-3">
-                <UtensilsCrossed className="h-8 w-8 text-primary" />
+              <div className="h-[72px] w-[72px] sm:h-20 sm:w-20 rounded-xl bg-primary/20 border-4 border-card flex items-center justify-center mb-3">
+                <UtensilsCrossed className="h-7 w-7 sm:h-8 sm:w-8 text-primary" />
               </div>
             )}
-            <h1 className="font-display text-2xl font-bold flex items-center gap-1.5">
+
+            <h1 className="font-display text-xl sm:text-2xl font-bold flex items-center gap-1.5 leading-tight">
               {profile.name} <VerifiedBadge />
             </h1>
-            {profile.description && <p className="text-sm text-muted-foreground mt-1">{profile.description}</p>}
-            {profile.address && <div className="flex items-center gap-2 text-sm text-muted-foreground mt-3"><MapPin className="h-4 w-4 shrink-0" /> {profile.address}</div>}
+            {profile.description && (
+              <p className="text-xs sm:text-sm text-muted-foreground mt-1 leading-relaxed">{profile.description}</p>
+            )}
+            {profile.address && (
+              <div className="flex items-start gap-1.5 text-xs sm:text-sm text-muted-foreground mt-2">
+                <MapPin className="h-3.5 w-3.5 shrink-0 mt-0.5" /> {profile.address}
+              </div>
+            )}
 
+            {/* Social badges */}
             {socials.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-4">
+              <div className="flex flex-wrap gap-1.5 mt-3">
                 {socials.map((s) => (
                   <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer">
-                    <Badge variant="secondary" className="px-2.5 py-1 cursor-pointer hover:bg-primary/10 transition-colors">
-                      {s.icon} <span className="text-xs ml-1.5">{s.label}</span>
+                    <Badge variant="secondary" className="flex items-center gap-1 px-2 py-1 text-[11px] cursor-pointer hover:bg-primary/10 transition-colors">
+                      {s.icon} <span>{s.label}</span>
                     </Badge>
                   </a>
                 ))}
@@ -180,13 +200,13 @@ export default function RestaurantProfile() {
             )}
           </CardContent>
 
-          {/* Business Gallery */}
+          {/* Gallery */}
           {profile.gallery && profile.gallery.length > 0 && (
-            <div className="px-6 pb-6 pt-2 border-t border-border/50">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60 mb-3">Gallery</p>
-              <div className="grid grid-cols-3 gap-3">
+            <div className="px-4 sm:px-6 pb-5 pt-2 border-t border-border/40">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/50 mb-2">Gallery</p>
+              <div className="grid grid-cols-3 gap-2">
                 {profile.gallery.map((url: string, i: number) => (
-                  <div key={i} className="aspect-square rounded-lg overflow-hidden border border-border/50 shadow-sm transition-transform hover:scale-105 active:scale-95 cursor-pointer">
+                  <div key={i} className="aspect-square rounded-lg overflow-hidden border border-border/40 shadow-sm transition-transform hover:scale-105 active:scale-95 cursor-pointer">
                     <img src={url} alt={`Gallery ${i}`} className="w-full h-full object-cover" />
                   </div>
                 ))}
@@ -195,13 +215,20 @@ export default function RestaurantProfile() {
           )}
         </Card>
 
+        {/* ── Contact buttons ── */}
         {contactButtons.length > 0 && (
           <Card className="card-artistic">
-            <CardContent className={`p-4 grid gap-2 ${contactButtons.length <= 2 ? "grid-cols-2" : contactButtons.length === 3 ? "grid-cols-3" : "grid-cols-4"}`}>
+            <CardContent className={`p-3 sm:p-4 grid gap-2 ${contactButtons.length <= 2 ? "grid-cols-2" : contactButtons.length === 3 ? "grid-cols-3" : "grid-cols-2 sm:grid-cols-4"}`}>
               {contactButtons.map((btn) => (
-                <a key={btn.label} href={btn.href} target={btn.external ? "_blank" : undefined} rel={btn.external ? "noopener noreferrer" : undefined}>
-                  <Button variant="outline" className="w-full flex-col h-auto py-3 gap-1">
-                    {btn.icon} <span className="text-xs">{btn.label}</span>
+                <a
+                  key={btn.label}
+                  href={btn.href}
+                  target={btn.external ? "_blank" : undefined}
+                  rel={btn.external ? "noopener noreferrer" : undefined}
+                >
+                  <Button variant="outline" className="w-full flex-col h-auto py-2.5 sm:py-3 gap-1 text-xs">
+                    {btn.icon}
+                    <span className="text-[11px] sm:text-xs">{btn.label}</span>
                   </Button>
                 </a>
               ))}
@@ -209,67 +236,117 @@ export default function RestaurantProfile() {
           </Card>
         )}
 
-        {/* Menu Section with Ordering */}
+        {/* ── Menu ── */}
         {categories.length > 0 && (
           <Card className="card-artistic">
-            <CardContent className="p-5">
-              <h2 className="font-display text-lg font-semibold mb-4">Menu</h2>
+            <CardContent className="p-3 sm:p-5">
+              <h2 className="font-display text-base sm:text-lg font-semibold mb-3 sm:mb-4">Menu</h2>
               <Tabs defaultValue={categories[0]?.id}>
-                <TabsList className="w-full justify-start overflow-x-auto mb-4 flex-wrap h-auto gap-1">
-                  {categories.map((cat) => (
-                    <TabsTrigger key={cat.id} value={cat.id}>{cat.name}</TabsTrigger>
-                  ))}
-                </TabsList>
+                {/* Horizontal scrollable tab bar on mobile */}
+                <div className="overflow-x-auto pb-1 -mx-1 px-1 mb-3 sm:mb-4">
+                  <TabsList className="flex w-max gap-1 h-auto bg-transparent p-0">
+                    {categories.map((cat) => (
+                      <TabsTrigger
+                        key={cat.id}
+                        value={cat.id}
+                        className="text-xs sm:text-sm whitespace-nowrap px-3 py-1.5 rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                      >
+                        {cat.name}
+                      </TabsTrigger>
+                    ))}
+                  </TabsList>
+                </div>
+
                 {categories.map((cat) => (
-                  <TabsContent key={cat.id} value={cat.id} className="space-y-3">
+                  <TabsContent key={cat.id} value={cat.id} className="space-y-2.5 mt-0">
                     {(cat as any).items.map((item: any) => (
-                      <div key={item.id} className="flex items-start gap-3 p-3 rounded-lg bg-black/5 hover:bg-black/10 transition-colors">
-                        <div className="h-16 w-16 rounded-lg overflow-hidden shrink-0 bg-muted flex items-center justify-center border border-border">
-                          {item.image_url ? <img src={item.image_url} alt={item.name} className="h-full w-full object-cover" /> : <span className="text-2xl select-none">🍽️</span>}
+                      <div
+                        key={item.id}
+                        className="flex items-center gap-2.5 sm:gap-3 p-2.5 sm:p-3 rounded-xl bg-black/5 hover:bg-black/10 transition-colors"
+                      >
+                        {/* Thumbnail */}
+                        <div className="h-14 w-14 sm:h-16 sm:w-16 rounded-lg overflow-hidden shrink-0 bg-muted flex items-center justify-center border border-border">
+                          {item.image_url
+                            ? <img src={item.image_url} alt={item.name} className="h-full w-full object-cover" />
+                            : <span className="text-xl select-none">🍽️</span>
+                          }
                         </div>
-                        
+
+                        {/* Name & description — tap to open details */}
                         <Dialog>
                           <DialogTrigger asChild>
                             <div className="flex-1 min-w-0 cursor-pointer group">
-                              <h4 className="font-medium text-sm group-hover:text-primary transition-colors flex items-center gap-1">
-                                {item.name} <Info className="h-3 w-3 opacity-50" />
+                              <h4 className="font-medium text-xs sm:text-sm group-hover:text-primary transition-colors flex items-center gap-1 leading-snug">
+                                {item.name}
+                                <Info className="h-3 w-3 opacity-40 shrink-0" />
                               </h4>
-                              {item.description && <p className="text-xs text-muted-foreground mt-0.5 truncate">{item.description}</p>}
+                              {item.description && (
+                                <p className="text-[11px] sm:text-xs text-muted-foreground mt-0.5 truncate leading-snug">
+                                  {item.description}
+                                </p>
+                              )}
+                              <p className="text-xs font-semibold text-primary mt-1">Rs. {Number(item.price).toFixed(2)}</p>
                             </div>
                           </DialogTrigger>
-                          <DialogContent className="max-w-sm rounded-3xl p-6">
-                            <DialogHeader><DialogTitle className="text-xl">{item.name}</DialogTitle></DialogHeader>
-                            <div className="space-y-4 py-2">
-                              <div className="aspect-video w-full rounded-2xl overflow-hidden bg-muted border"><img src={item.image_url || "/placeholder-food.png"} className="w-full h-full object-cover" /></div>
+                          <DialogContent className="max-w-[92vw] sm:max-w-sm rounded-3xl p-5 sm:p-6">
+                            <DialogHeader>
+                              <DialogTitle className="text-lg sm:text-xl">{item.name}</DialogTitle>
+                            </DialogHeader>
+                            <div className="space-y-3 py-2">
+                              <div className="aspect-video w-full rounded-2xl overflow-hidden bg-muted border">
+                                <img src={item.image_url || "/placeholder-food.png"} className="w-full h-full object-cover" alt={item.name} />
+                              </div>
                               {item.gallery && item.gallery.length > 0 && (
                                 <div className="grid grid-cols-3 gap-2">
                                   {item.gallery.map((url: string, gi: number) => (
-                                    <div key={gi} className="aspect-square rounded-lg overflow-hidden border"><img src={url} className="h-full w-full object-cover" /></div>
+                                    <div key={gi} className="aspect-square rounded-lg overflow-hidden border">
+                                      <img src={url} className="h-full w-full object-cover" alt="" />
+                                    </div>
                                   ))}
                                 </div>
                               )}
-                              <p className="text-sm text-muted-foreground">{item.description || "No description available."}</p>
-                              <div className="flex items-center justify-between pt-2">
-                                <span className="text-xl font-bold text-primary">Rs. {Number(item.price).toFixed(2)}</span>
-                                <Button className="rounded-full px-6" onClick={() => addToCart(item)}>Add to Order</Button>
+                              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                                {item.description || "No description available."}
+                              </p>
+                              <div className="flex items-center justify-between pt-1">
+                                <span className="text-lg sm:text-xl font-bold text-primary">Rs. {Number(item.price).toFixed(2)}</span>
+                                <Button className="rounded-full px-5 text-sm" onClick={() => addToCart(item)}>
+                                  Add to Order
+                                </Button>
                               </div>
                             </div>
                           </DialogContent>
                         </Dialog>
 
-                        <div className="flex items-center gap-3 ml-2">
-                          <span className="font-display font-semibold text-primary text-sm shrink-0">Rs. {Number(item.price).toFixed(2)}</span>
-                          <div className="flex items-center gap-1 border-l pl-3">
-                            {cart[item.id] ? (
-                              <div className="flex items-center gap-2">
-                                <button onClick={() => removeFromCart(item.id)}><MinusCircle className="h-5 w-5 text-primary" /></button>
-                                <span className="text-xs font-bold w-4 text-center">{cart[item.id].quantity}</span>
-                                <button onClick={() => addToCart(item)}><PlusCircle className="h-5 w-5 text-primary" /></button>
-                              </div>
-                            ) : (
-                              <Button size="sm" variant="ghost" className="h-8 w-8 p-0" onClick={() => addToCart(item)}><PlusCircle className="h-6 w-6 text-primary" /></Button>
-                            )}
-                          </div>
+                        {/* +/- controls */}
+                        <div className="flex items-center gap-1 border-l pl-2.5 sm:pl-3 shrink-0">
+                          {cart[item.id] ? (
+                            <div className="flex items-center gap-1.5">
+                              <button
+                                onClick={() => removeFromCart(item.id)}
+                                className="touch-action-manipulation"
+                                aria-label="Remove"
+                              >
+                                <MinusCircle className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+                              </button>
+                              <span className="text-xs font-bold w-4 text-center">{cart[item.id].quantity}</span>
+                              <button
+                                onClick={() => addToCart(item)}
+                                className="touch-action-manipulation"
+                                aria-label="Add"
+                              >
+                                <PlusCircle className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+                              </button>
+                            </div>
+                          ) : (
+                            <button
+                              onClick={() => addToCart(item)}
+                              className="touch-action-manipulation p-0.5"
+                              aria-label="Add to cart"
+                            >
+                              <PlusCircle className="h-6 w-6 sm:h-7 sm:w-7 text-primary" />
+                            </button>
+                          )}
                         </div>
                       </div>
                     ))}
@@ -281,49 +358,68 @@ export default function RestaurantProfile() {
         )}
       </div>
 
-      {/* Floating Cart Button */}
+      {/* ── Floating Cart ── */}
       {cartItemsCount > 0 && (
-        <div className="fixed bottom-6 w-full max-w-lg px-6 flex justify-center">
-          <Dialog open={orderModalOpen} onOpenChange={setOrderModalOpen}>
-            <DialogTrigger asChild>
-              <Button className="w-full h-14 rounded-full shadow-2xl flex items-center justify-between px-6 bg-primary hover:bg-primary/90 transition-all">
-                <div className="flex items-center gap-3">
-                  <div className="bg-white/20 p-2 rounded-full"><ShoppingBag className="h-5 w-5 text-white" /></div>
-                  <div className="text-left text-white">
-                    <p className="text-[10px] uppercase font-bold opacity-70">Review Order</p>
-                    <p className="text-sm font-bold">{cartItemsCount} Items</p>
+        <div className="fixed bottom-4 sm:bottom-6 left-0 right-0 px-3 sm:px-4 flex justify-center z-50 pointer-events-none">
+          <div className="w-full max-w-md sm:max-w-lg pointer-events-auto">
+            <Dialog open={orderModalOpen} onOpenChange={setOrderModalOpen}>
+              <DialogTrigger asChild>
+                <Button className="w-full h-14 rounded-full shadow-2xl flex items-center justify-between px-4 sm:px-6 bg-primary hover:bg-primary/90 active:scale-[0.98] transition-all">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <div className="bg-white/20 p-1.5 sm:p-2 rounded-full">
+                      <ShoppingBag className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+                    </div>
+                    <div className="text-left text-white">
+                      <p className="text-[10px] uppercase font-bold opacity-70 leading-none">Review Order</p>
+                      <p className="text-sm font-bold leading-tight">{cartItemsCount} Item{cartItemsCount > 1 ? 's' : ''}</p>
+                    </div>
+                  </div>
+                  <p className="text-base sm:text-lg font-bold text-white">Rs. {cartTotal.toFixed(2)}</p>
+                </Button>
+              </DialogTrigger>
+
+              <DialogContent className="max-w-[92vw] sm:max-w-sm rounded-3xl mx-auto">
+                <DialogHeader>
+                  <DialogTitle className="text-lg">Complete Your Order</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 py-3">
+                  <div className="space-y-1.5">
+                    <Label className="text-sm font-semibold">Table Number *</Label>
+                    <Input
+                      placeholder="E.g. Table 5"
+                      value={tableNumber}
+                      onChange={(e) => setTableNumber(e.target.value)}
+                      className="h-11 text-base"
+                    />
+                  </div>
+                  <div className="space-y-2 max-h-52 overflow-y-auto pr-1">
+                    {Object.values(cart).map((c) => (
+                      <div key={c.item.id} className="flex items-center justify-between py-2 border-b last:border-0">
+                        <div>
+                          <p className="text-sm font-medium">{c.item.name}</p>
+                          <p className="text-xs text-muted-foreground">× {c.quantity}</p>
+                        </div>
+                        <p className="text-sm font-bold">Rs. {(c.item.price * c.quantity).toFixed(2)}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex items-center justify-between pt-3 border-t-2 border-dashed">
+                    <span className="font-bold">Total</span>
+                    <span className="font-bold text-primary">Rs. {cartTotal.toFixed(2)}</span>
                   </div>
                 </div>
-                <div className="text-right text-white"><p className="text-lg font-bold">Rs. {cartTotal.toFixed(2)}</p></div>
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-sm rounded-3xl">
-              <DialogHeader><DialogTitle>Complete Your Order</DialogTitle></DialogHeader>
-              <div className="space-y-4 py-4">
-                <div className="space-y-2">
-                  <Label>Table Number *</Label>
-                  <Input placeholder="E.g. Table 5" value={tableNumber} onChange={(e) => setTableNumber(e.target.value)} className="h-12 text-lg" />
-                </div>
-                <div className="space-y-3 max-h-60 overflow-y-auto">
-                  {Object.values(cart).map((c) => (
-                    <div key={c.item.id} className="flex items-center justify-between py-2 border-b last:border-0">
-                      <div><p className="text-sm font-medium">{c.item.name}</p><p className="text-xs text-muted-foreground">x{c.quantity}</p></div>
-                      <p className="text-sm font-bold">Rs. {(c.item.price * c.quantity).toFixed(2)}</p>
-                    </div>
-                  ))}
-                </div>
-                <div className="flex items-center justify-between pt-4 border-t-2 border-dashed">
-                  <span className="font-bold text-lg">Total</span>
-                  <span className="font-bold text-lg text-primary">Rs. {cartTotal.toFixed(2)}</span>
-                </div>
-              </div>
-              <DialogFooter>
-                <Button className="w-full h-12 rounded-xl text-lg font-bold" disabled={ordering || !tableNumber} onClick={handlePlaceOrder}>
-                  {ordering ? <Loader2 className="h-5 w-5 animate-spin" /> : "Confirm & Place Order"}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+                <DialogFooter>
+                  <Button
+                    className="w-full h-11 rounded-xl font-bold"
+                    disabled={ordering || !tableNumber}
+                    onClick={handlePlaceOrder}
+                  >
+                    {ordering ? <Loader2 className="h-5 w-5 animate-spin" /> : "Confirm & Place Order"}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
       )}
     </div>

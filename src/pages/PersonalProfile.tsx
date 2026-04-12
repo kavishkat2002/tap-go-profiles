@@ -58,91 +58,111 @@ export default function PersonalProfile() {
   };
 
   return (
-    <div id="profile-wrapper" className={`min-h-screen flex flex-col items-center justify-center p-4 gap-6 relative ${profile.bg_theme || ''} ${profile.theme || ''}`}>
-      {/* Artistic background blur decorative element */}
-      <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/10 rounded-full blur-3xl -z-10 animate-pulse" />
-      <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-accent/10 rounded-full blur-3xl -z-10 animate-pulse" />
-      {/* ── Owner edit button ── */}
+    <div
+      id="profile-wrapper"
+      className={`min-h-screen w-full flex flex-col items-center justify-start sm:justify-center px-3 sm:px-4 py-6 sm:py-8 gap-4 sm:gap-6 relative ${profile.bg_theme || ''} ${profile.theme || ''}`}
+    >
+      {/* Decorative blobs */}
+      <div className="absolute top-1/4 left-0 w-48 sm:w-64 h-48 sm:h-64 bg-primary/10 rounded-full blur-3xl -z-10 animate-pulse pointer-events-none" />
+      <div className="absolute bottom-1/4 right-0 w-48 sm:w-64 h-48 sm:h-64 bg-accent/10 rounded-full blur-3xl -z-10 animate-pulse pointer-events-none" />
+
+      {/* Owner actions */}
       {!!user && profile.user_id === user.id && (
         <div className="w-full max-w-sm flex justify-end gap-2">
           <ThemeDrawer profile={profile} />
-          <Button asChild size="sm" variant="outline">
+          <Button asChild size="sm" variant="outline" className="text-xs sm:text-sm">
             <Link to={`/edit/${profile.slug}`}>
-              <Pencil className="h-4 w-4 mr-2" /> Edit Profile
+              <Pencil className="h-3.5 w-3.5 mr-1.5" /> Edit
             </Link>
           </Button>
         </div>
       )}
-      <Card className="w-full max-w-sm card-artistic">
+
+      <Card className="w-full max-w-sm card-artistic overflow-hidden">
+        {/* Cover */}
         {profile.cover_url ? (
-          <img src={profile.cover_url} alt="Cover" className="h-28 w-full object-cover" />
+          <img src={profile.cover_url} alt="Cover" className="h-24 sm:h-28 w-full object-cover" />
         ) : (
-          <div className="hero-gradient h-28" />
+          <div className="hero-gradient h-24 sm:h-28" />
         )}
-        <CardContent className="relative -mt-12 text-center pb-8">
+
+        <CardContent className="relative -mt-10 sm:-mt-12 text-center px-4 sm:px-6 pb-6 sm:pb-8">
+          {/* Avatar */}
           {profile.image_url ? (
-            <img 
-              src={profile.image_url} 
-              alt={profile.name} 
-              className="h-24 w-24 rounded-full object-cover border-4 border-card mx-auto mb-3 shadow" 
+            <img
+              src={profile.image_url}
+              alt={profile.name}
+              className="h-20 w-20 sm:h-24 sm:w-24 rounded-full object-cover border-4 border-card mx-auto mb-3 shadow-lg"
             />
           ) : (
-            <div className="h-20 w-20 rounded-full bg-primary/20 border-4 border-card flex items-center justify-center mx-auto mb-3 shadow">
-              <User className="h-10 w-10 text-primary" />
+            <div className="h-20 w-20 sm:h-24 sm:w-24 rounded-full bg-primary/20 border-4 border-card flex items-center justify-center mx-auto mb-3 shadow-lg">
+              <User className="h-9 w-9 sm:h-10 sm:w-10 text-primary" />
             </div>
           )}
-          <h1 className="font-display text-xl font-bold flex items-center justify-center gap-1.5">
+
+          <h1 className="font-display text-lg sm:text-xl font-bold flex items-center justify-center gap-1.5 leading-tight">
             {profile.name}
             <VerifiedBadge />
           </h1>
-          <p className="text-sm text-muted-foreground mt-1 mb-5">{profile.description}</p>
+          {profile.description && (
+            <p className="text-xs sm:text-sm text-muted-foreground mt-1 mb-4 leading-relaxed px-2">{profile.description}</p>
+          )}
 
-          <div className="grid grid-cols-3 gap-2 mb-5">
+          {/* Contact grid — 3‑up on most phones */}
+          <div className="grid grid-cols-3 gap-2 mb-4">
             {profile.phone && (
               <a href={`tel:${profile.phone}`}>
-                <Button variant="outline" className="w-full flex-col h-auto py-3 gap-1">
-                  <Phone className="h-5 w-5 text-primary" />
-                  <span className="text-xs">Call</span>
+                <Button variant="outline" className="w-full flex-col h-auto py-2.5 sm:py-3 gap-1">
+                  <Phone className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+                  <span className="text-[11px] sm:text-xs">Call</span>
                 </Button>
               </a>
             )}
             {profile.whatsapp && (
               <a href={`https://wa.me/${profile.whatsapp.replace(/\+/g, "")}`} target="_blank" rel="noopener noreferrer">
-                <Button variant="outline" className="w-full flex-col h-auto py-3 gap-1">
-                  <MessageCircle className="h-5 w-5 text-primary" />
-                  <span className="text-xs">WhatsApp</span>
+                <Button variant="outline" className="w-full flex-col h-auto py-2.5 sm:py-3 gap-1">
+                  <MessageCircle className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+                  <span className="text-[11px] sm:text-xs">WhatsApp</span>
                 </Button>
               </a>
             )}
             {profile.email && (
               <a href={`mailto:${profile.email}`}>
-                <Button variant="outline" className="w-full flex-col h-auto py-3 gap-1">
-                  <Mail className="h-5 w-5 text-primary" />
-                  <span className="text-xs">Email</span>
+                <Button variant="outline" className="w-full flex-col h-auto py-2.5 sm:py-3 gap-1">
+                  <Mail className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+                  <span className="text-[11px] sm:text-xs">Email</span>
                 </Button>
               </a>
             )}
           </div>
 
+          {/* Website link */}
           {profile.website && (
-            <a href={profile.website} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 text-sm text-primary hover:underline mb-5">
-              <Globe className="h-4 w-4" /> {profile.website.replace(/https?:\/\//, "")}
+            <a
+              href={profile.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-1.5 text-xs sm:text-sm text-primary hover:underline mb-4 truncate px-2"
+            >
+              <Globe className="h-3.5 w-3.5 shrink-0" />
+              <span className="truncate">{profile.website.replace(/https?:\/\//, "")}</span>
             </a>
           )}
 
+          {/* Social icons */}
           {socialIcons.length > 0 && (
-            <div className="flex justify-center gap-3 mb-5">
+            <div className="flex justify-center gap-2.5 mb-4 flex-wrap">
               {socialIcons.map(({ key, icon: Icon, url }) => (
                 <a key={key} href={url!} target="_blank" rel="noopener noreferrer">
-                  <Button variant="secondary" size="icon" className="rounded-full">
-                    <Icon className="h-4 w-4" />
+                  <Button variant="secondary" size="icon" className="rounded-full h-9 w-9 sm:h-10 sm:w-10">
+                    <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   </Button>
                 </a>
               ))}
             </div>
           )}
 
-          <Button className="w-full" onClick={() => downloadVCard(vcardProfile as any)}>
+          <Button className="w-full h-10 sm:h-11 text-sm sm:text-base" onClick={() => downloadVCard(vcardProfile as any)}>
             <Download className="h-4 w-4 mr-2" /> Save Contact
           </Button>
         </CardContent>

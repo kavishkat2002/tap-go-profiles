@@ -87,9 +87,18 @@
   }
   body {
     @apply bg-background text-foreground font-sans;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Space Grotesk', sans-serif;
+  }
+  /* Ensure smooth scrolling & proper mobile viewport */
+  html {
+    scroll-behavior: smooth;
+  }
+  button, a {
+    touch-action: manipulation;
   }
 }
 
