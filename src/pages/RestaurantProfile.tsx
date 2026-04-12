@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import ProfileFooter from "@/components/ProfileFooter";
 
 export default function RestaurantProfile() {
   const { restaurant } = useParams();
@@ -388,6 +389,8 @@ export default function RestaurantProfile() {
           </Card>
         )}
       </div>
+
+      <ProfileFooter />
 
       {/* ── Floating Cart ── */}
       {cartItemsCount > 0 && (

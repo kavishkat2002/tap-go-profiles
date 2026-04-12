@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import ThemeDrawer from "@/components/ThemeDrawer";
+import ProfileFooter from "@/components/ProfileFooter";
 
 export default function PersonalProfile() {
   const { username } = useParams();
@@ -167,6 +168,7 @@ export default function PersonalProfile() {
           </Button>
         </CardContent>
       </Card>
+      <ProfileFooter />
     </div>
   );
 }

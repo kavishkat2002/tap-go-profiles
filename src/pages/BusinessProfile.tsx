@@ -12,6 +12,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import ThemeDrawer from "@/components/ThemeDrawer";
+import ProfileFooter from "@/components/ProfileFooter";
 
 export default function BusinessProfile() {
   const { business } = useParams();
@@ -211,6 +212,8 @@ export default function BusinessProfile() {
           </Card>
         )}
       </div>
+
+      <ProfileFooter />
     </div>
   );
 }
