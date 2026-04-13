@@ -2,7 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Phone, MessageCircle, Mail, Globe, Facebook, Instagram, Linkedin, Twitter, Download, User, Loader2, Pencil } from "lucide-react";
+import { Phone, MessageCircle, Mail, Globe, MapPin, Facebook, Instagram, Linkedin, Twitter, Download, User, Loader2, Pencil } from "lucide-react";
 import { fetchProfileBySlug, incrementViews } from "@/lib/api";
 import { downloadVCard } from "@/lib/vcard";
 import { useAuth } from "@/hooks/useAuth";
@@ -139,7 +139,14 @@ export default function PersonalProfile() {
             <VerifiedBadge />
           </h1>
           {profile.description && (
-            <p className="text-xs sm:text-sm text-muted-foreground mt-1 mb-4 leading-relaxed px-2">{profile.description}</p>
+            <p className="text-xs sm:text-sm text-muted-foreground mt-1 mb-2 leading-relaxed px-2">{profile.description}</p>
+          )}
+
+          {profile.address && (
+              <div className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground mb-4">
+                  <MapPin className="h-3.5 w-3.5" />
+                  <span>{profile.address}</span>
+              </div>
           )}
 
           {/* Contact grid — 3‑up on most phones */}
