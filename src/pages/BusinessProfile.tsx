@@ -76,7 +76,7 @@ export default function BusinessProfile() {
 
   const isOwner = !!user && profile.user_id === user.id;
 
-  if ((profile as any).is_blocked) {
+  if (profile.is_blocked) {
     return <SuspendedView isOwner={isOwner} />;
   }
 
@@ -203,9 +203,9 @@ export default function BusinessProfile() {
         )}
 
         {/* Google Reviews */}
-        {(profile as any).google_review_url && (
+        {profile.google_review_url && (
           <a
-            href={(profile as any).google_review_url}
+            href={profile.google_review_url}
             target="_blank"
             rel="noopener noreferrer"
             className="block"

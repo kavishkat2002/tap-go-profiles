@@ -103,17 +103,17 @@ export default function EditProfile() {
       linkedin: profile.linkedin ?? "",
       twitter: profile.twitter ?? "",
       services: (profile.services ?? []).join("\n"),
-      google_review_url: (profile as any).google_review_url ?? "",
-      workplace: (profile as any).workplace ?? "",
-      position: (profile as any).position ?? "",
-      experience: (profile as any).experience ?? "",
-      projects: (profile as any).projects ?? "",
-      education: (profile as any).education ?? "",
+      google_review_url: profile.google_review_url ?? "",
+      workplace: profile.workplace ?? "",
+      position: profile.position ?? "",
+      experience: profile.experience ?? "",
+      projects: profile.projects ?? "",
+      education: profile.education ?? "",
       theme: profile.theme ?? "theme-default",
       bg_theme: profile.bg_theme ?? "bg-theme-default",
     });
 
-    const existingGallery = (profile as any).gallery ?? [];
+    const existingGallery = profile.gallery ?? [];
     setGalleryImages([
       { file: null, preview: existingGallery[0] ?? null, id: 1 },
       { file: null, preview: existingGallery[1] ?? null, id: 2 },
@@ -144,7 +144,7 @@ export default function EditProfile() {
 
   // Guard: not the owner
   const isOwner = !!user && !!profile && profile.user_id === user.id;
-  const isBlocked = (profile as any)?.is_blocked === true;
+  const isBlocked = profile?.is_blocked === true;
 
   if (profile && !profileLoading && !isOwner) {
     return (
@@ -282,7 +282,7 @@ export default function EditProfile() {
       }
 
       // Gallery upload
-      const finalGallery: (string | null)[] = [...(profile as any).gallery ?? [null, null, null]];
+      const finalGallery: (string | null)[] = [...profile.gallery ?? [null, null, null]];
       for (let i = 0; i < 3; i++) {
         const img = galleryImages[i];
         if (img.file) {

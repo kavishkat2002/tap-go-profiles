@@ -87,6 +87,47 @@ export type Database = {
           },
         ]
       }
+      orders: {
+        Row: {
+          created_at: string
+          id: string
+          items: Json
+          profile_id: string
+          status: string
+          table_number: string
+          total_price: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          items: Json
+          profile_id: string
+          status?: string
+          table_number: string
+          total_price: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          items?: Json
+          profile_id?: string
+          status?: string
+          table_number?: string
+          total_price?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           address: string | null
@@ -94,15 +135,23 @@ export type Database = {
           cover_url: string | null
           created_at: string
           description: string | null
+          education: string | null
           email: string | null
+          experience: string | null
           facebook: string | null
+          gallery: string[] | null
           google_review_url: string | null
           id: string
           image_url: string | null
           instagram: string | null
+          is_admin: boolean
+          is_blocked: boolean
+          is_premium: boolean
           linkedin: string | null
           name: string
           phone: string | null
+          position: string | null
+          projects: string | null
           services: string[] | null
           slug: string
           theme: string | null
@@ -113,6 +162,7 @@ export type Database = {
           views: number
           website: string | null
           whatsapp: string | null
+          workplace: string | null
         }
         Insert: {
           address?: string | null
@@ -120,15 +170,23 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           description?: string | null
+          education?: string | null
           email?: string | null
+          experience?: string | null
           facebook?: string | null
+          gallery?: string[] | null
           google_review_url?: string | null
           id?: string
           image_url?: string | null
           instagram?: string | null
+          is_admin?: boolean
+          is_blocked?: boolean
+          is_premium?: boolean
           linkedin?: string | null
           name: string
           phone?: string | null
+          position?: string | null
+          projects?: string | null
           services?: string[] | null
           slug: string
           theme?: string | null
@@ -139,6 +197,7 @@ export type Database = {
           views?: number
           website?: string | null
           whatsapp?: string | null
+          workplace?: string | null
         }
         Update: {
           address?: string | null
@@ -146,15 +205,23 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           description?: string | null
+          education?: string | null
           email?: string | null
+          experience?: string | null
           facebook?: string | null
+          gallery?: string[] | null
           google_review_url?: string | null
           id?: string
           image_url?: string | null
           instagram?: string | null
+          is_admin?: boolean
+          is_blocked?: boolean
+          is_premium?: boolean
           linkedin?: string | null
           name?: string
           phone?: string | null
+          position?: string | null
+          projects?: string | null
           services?: string[] | null
           slug?: string
           theme?: string | null
@@ -165,6 +232,7 @@ export type Database = {
           views?: number
           website?: string | null
           whatsapp?: string | null
+          workplace?: string | null
         }
         Relationships: []
       }

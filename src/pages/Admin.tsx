@@ -33,7 +33,7 @@ export default function AdminDashboard() {
 
   const handleBlockUser = async (profileId: string, isBlocked: boolean) => {
     try {
-      await updateProfile(profileId, { is_blocked: !isBlocked } as any);
+      await updateProfile(profileId, { is_blocked: !isBlocked });
       queryClient.invalidateQueries({ queryKey: ["admin", "profiles"] });
       toast({ 
         title: isBlocked ? "Account Restored" : "Account Suspended", 
@@ -47,7 +47,7 @@ export default function AdminDashboard() {
   const handleTogglePremium = async (profileId: string, currentStatus: boolean) => {
     try {
       // Assuming a 'is_premium' column exists or adding it as custom behavior
-      await updateProfile(profileId, { is_premium: !currentStatus } as any);
+      await updateProfile(profileId, { is_premium: !currentStatus });
       queryClient.invalidateQueries({ queryKey: ["admin", "profiles"] });
       toast({ 
         title: currentStatus ? "Premium Disabled" : "Premium Enabled", 
@@ -73,7 +73,7 @@ export default function AdminDashboard() {
     );
   }
 
-  const userProfile = profiles?.find(p => p.user_id === user?.id) as any;
+  const userProfile = profiles?.find(p => p.user_id === user?.id);
   const isAdmin = userProfile?.is_admin === true;
   const isDeveloper = [
     "kavishkat2002@gmail.com",
@@ -215,7 +215,7 @@ export default function AdminDashboard() {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      {(profile as any).is_blocked ? (
+                      {profile.is_blocked ? (
                         <Badge variant="destructive" className="gap-1 px-1.5 py-0">
                           <Ban className="h-3 w-3" /> Suspended
                         </Badge>
@@ -226,7 +226,7 @@ export default function AdminDashboard() {
                       )}
                     </TableCell>
                     <TableCell>
-                      {(profile as any).is_premium ? (
+                      {profile.is_premium ? (
                         <Badge className="bg-amber-100 text-amber-700 border-amber-200 gap-1 px-1.5 py-0">
                           <Zap className="h-3 w-3" /> Premium
                         </Badge>
@@ -246,8 +246,8 @@ export default function AdminDashboard() {
                         <Button 
                             variant="ghost" 
                             size="icon" 
-                            className={(profile as any).is_premium ? "text-amber-500" : "text-muted-foreground"}
-                            onClick={() => handleTogglePremium(profile.id, (profile as any).is_premium)}
+                            className={profile.is_premium ? "text-amber-500" : "text-muted-foreground"}
+                            onClick={() => handleTogglePremium(profile.id, profile.is_premium)}
                             title="Toggle Premium Status"
                         >
                           <CreditCard className="h-4 w-4" />
@@ -255,11 +255,11 @@ export default function AdminDashboard() {
                         <Button 
                             variant="ghost" 
                             size="icon" 
-                            className={(profile as any).is_blocked ? "text-green-600" : "text-destructive"}
-                            onClick={() => handleBlockUser(profile.id, (profile as any).is_blocked)}
-                            title={(profile as any).is_blocked ? "Activate Account" : "Suspend Account"}
+                            className={profile.is_blocked ? "text-green-600" : "text-destructive"}
+                            onClick={() => handleBlockUser(profile.id, profile.is_blocked)}
+                            title={profile.is_blocked ? "Activate Account" : "Suspend Account"}
                         >
-                          {(profile as any).is_blocked ? <ShieldCheck className="h-4 w-4" /> : <Ban className="h-4 w-4" />}
+                          {profile.is_blocked ? <ShieldCheck className="h-4 w-4" /> : <Ban className="h-4 w-4" />}
                         </Button>
                       </div>
                     </TableCell>

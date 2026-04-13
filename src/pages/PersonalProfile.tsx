@@ -73,7 +73,7 @@ export default function PersonalProfile() {
 
   const isOwner = !!user && profile.user_id === user.id;
 
-  if ((profile as any).is_blocked) {
+  if (profile.is_blocked) {
     return <SuspendedView isOwner={isOwner} />;
   }
 
@@ -142,10 +142,10 @@ export default function PersonalProfile() {
             <VerifiedBadge />
           </h1>
           
-          {((profile as any).position || (profile as any).workplace) && (
+          {(profile.position || profile.workplace) && (
               <div className="flex items-center justify-center gap-1.5 text-xs font-semibold text-primary/80 mt-0.5 mb-1 italic">
                   <span>
-                      {(profile as any).position} {(profile as any).position && (profile as any).workplace && "@"} {(profile as any).workplace}
+                      {profile.position} {profile.position && profile.workplace && "@"} {profile.workplace}
                   </span>
               </div>
           )}
@@ -216,46 +216,46 @@ export default function PersonalProfile() {
 
           {/* Experience & Projects */}
           <div className="space-y-4 mb-6 text-left">
-              {(profile as any).experience && (
+              {profile.experience && (
                   <div className="bg-primary/5 rounded-2xl p-4 border border-primary/10">
                       <h4 className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-primary mb-2">
                           Professional Journey
                       </h4>
                       <p className="text-xs text-muted-foreground whitespace-pre-wrap leading-relaxed">
-                          {(profile as any).experience}
+                          {profile.experience}
                       </p>
                   </div>
               )}
 
-              {(profile as any).education && (
+              {profile.education && (
                   <div className="bg-slate-500/5 rounded-2xl p-4 border border-slate-500/10">
                       <h4 className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">
                           <GraduationCap className="h-3 w-3" /> Academic Background
                       </h4>
                       <p className="text-xs text-muted-foreground whitespace-pre-wrap leading-relaxed">
-                          {(profile as any).education}
+                          {profile.education}
                       </p>
                   </div>
               )}
 
-              {(profile as any).projects && (
+              {profile.projects && (
                   <div className="bg-accent/5 rounded-2xl p-4 border border-accent/10">
                       <h4 className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-accent mb-2">
                           PROJECTS
                       </h4>
                       <p className="text-xs text-muted-foreground whitespace-pre-wrap leading-relaxed">
-                          {(profile as any).projects}
+                          {profile.projects}
                       </p>
                   </div>
               )}
 
-              {(profile as any).gallery && (profile as any).gallery.filter(Boolean).length > 0 && (
+              {profile.gallery && profile.gallery.filter(Boolean).length > 0 && (
                   <div className="space-y-2">
                       <h4 className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50 mb-1 ml-1">
                           GALLERY
                       </h4>
                       <div className="grid grid-cols-3 gap-2">
-                          {(profile as any).gallery.filter(Boolean).map((url: string, i: number) => (
+                          {profile.gallery.filter(Boolean).map((url: string, i: number) => (
                               <ImagePreview key={i} src={url} alt={`Gallery ${i}`}>
                                 <div className="aspect-square rounded-xl overflow-hidden shadow-sm border border-border/40 cursor-pointer group">
                                     <img src={url} alt={`Gallery ${i}`} className="w-full h-full object-cover transition-transform group-hover:scale-110" />
