@@ -154,7 +154,7 @@ export default function PersonalProfile() {
             {profile.phone && (
               <a href={`tel:${profile.phone}`}>
                 <Button variant="outline" className="w-full flex-col h-auto py-2.5 sm:py-3 gap-1">
-                  <Phone className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+                  <Phone className="h-4 w-4 sm:h-5 sm:w-5" />
                   <span className="text-[11px] sm:text-xs">Call</span>
                 </Button>
               </a>
@@ -162,7 +162,7 @@ export default function PersonalProfile() {
             {profile.whatsapp && (
               <a href={`https://wa.me/${profile.whatsapp.replace(/\+/g, "")}`} target="_blank" rel="noopener noreferrer">
                 <Button variant="outline" className="w-full flex-col h-auto py-2.5 sm:py-3 gap-1">
-                  <MessageCircle className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+                  <MessageCircle className="h-4 w-4 sm:h-5 sm:w-5" />
                   <span className="text-[11px] sm:text-xs">WhatsApp</span>
                 </Button>
               </a>
@@ -170,7 +170,7 @@ export default function PersonalProfile() {
             {profile.email && (
               <a href={`mailto:${profile.email}`}>
                 <Button variant="outline" className="w-full flex-col h-auto py-2.5 sm:py-3 gap-1">
-                  <Mail className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+                  <Mail className="h-4 w-4 sm:h-5 sm:w-5" />
                   <span className="text-[11px] sm:text-xs">Email</span>
                 </Button>
               </a>

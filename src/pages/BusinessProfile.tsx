@@ -78,10 +78,10 @@ export default function BusinessProfile() {
   }
 
   const contactButtons = [
-    profile.phone    && { href: `tel:${profile.phone}`,                              icon: <Phone className="h-5 w-5 text-primary" />,       label: "Call" },
-    profile.whatsapp && { href: `https://wa.me/${profile.whatsapp.replace(/\+/g, "")}`, icon: <MessageCircle className="h-5 w-5 text-primary" />, label: "WhatsApp", external: true },
-    profile.email    && { href: `mailto:${profile.email}`,                            icon: <Mail className="h-5 w-5 text-primary" />,         label: "Email" },
-    profile.website  && { href: profile.website,                                      icon: <Globe className="h-5 w-5 text-primary" />,        label: "Website", external: true },
+    profile.phone    && { href: `tel:${profile.phone}`,                              icon: <Phone className="h-5 w-5" />,       label: "Call" },
+    profile.whatsapp && { href: `https://wa.me/${profile.whatsapp.replace(/\+/g, "")}`, icon: <MessageCircle className="h-5 w-5" />, label: "WhatsApp", external: true },
+    profile.email    && { href: `mailto:${profile.email}`,                            icon: <Mail className="h-5 w-5" />,         label: "Email" },
+    profile.website  && { href: profile.website,                                      icon: <Globe className="h-5 w-5" />,        label: "Website", external: true },
   ].filter(Boolean) as { href: string; icon: React.ReactNode; label: string; external?: boolean }[];
 
   const socials = [

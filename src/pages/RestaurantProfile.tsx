@@ -148,10 +148,10 @@ export default function RestaurantProfile() {
   };
 
   const contactButtons = [
-    profile.phone    && { href: `tel:${profile.phone}`,                              icon: <Phone className="h-5 w-5 text-primary" />,       label: "Call" },
-    profile.whatsapp && { href: `https://wa.me/${profile.whatsapp.replace(/\+/g,"")}`, icon: <MessageCircle className="h-5 w-5 text-primary" />, label: "WhatsApp", external: true },
-    profile.email    && { href: `mailto:${profile.email}`,                            icon: <Mail className="h-5 w-5 text-primary" />,         label: "Email" },
-    profile.website  && { href: profile.website,                                      icon: <Globe className="h-5 w-5 text-primary" />,        label: "Website", external: true },
+    profile.phone    && { href: `tel:${profile.phone}`,                              icon: <Phone className="h-5 w-5" />,       label: "Call" },
+    profile.whatsapp && { href: `https://wa.me/${profile.whatsapp.replace(/\+/g,"")}`, icon: <MessageCircle className="h-5 w-5" />, label: "WhatsApp", external: true },
+    profile.email    && { href: `mailto:${profile.email}`,                            icon: <Mail className="h-5 w-5" />,         label: "Email" },
+    profile.website  && { href: profile.website,                                      icon: <Globe className="h-5 w-5" />,        label: "Website", external: true },
   ].filter(Boolean) as { href: string; icon: React.ReactNode; label: string; external?: boolean }[];
 
   const socials = [
@@ -202,7 +202,7 @@ export default function RestaurantProfile() {
               />
             ) : (
               <div className="h-[72px] w-[72px] sm:h-20 sm:w-20 rounded-xl bg-primary/20 border-4 border-card flex items-center justify-center mb-3">
-                <UtensilsCrossed className="h-7 w-7 sm:h-8 sm:w-8 text-primary" />
+                <UtensilsCrossed className="h-7 w-7 sm:h-8 sm:w-8 text-primary/60" />
               </div>
             )}
 
