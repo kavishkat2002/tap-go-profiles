@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   Phone, MessageCircle, Mail, Globe, MapPin, Store, Loader2,
-  Facebook, Instagram, Twitter, Linkedin, Pencil
+  Facebook, Instagram, Twitter, Linkedin, Pencil, LayoutDashboard
 } from "lucide-react";
 import { fetchProfileBySlug, incrementViews } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
@@ -106,6 +106,11 @@ export default function BusinessProfile() {
         {/* Owner actions */}
         {isOwner && (
           <div className="flex justify-end gap-2">
+            <Button asChild size="sm" variant="outline" className="text-xs sm:text-sm">
+              <Link to="/dashboard">
+                <LayoutDashboard className="h-3.5 w-3.5 mr-1.5" /> Dashboard
+              </Link>
+            </Button>
             <ThemeDrawer profile={profile} />
             <Button asChild size="sm" variant="outline" className="text-xs sm:text-sm">
               <Link to={`/edit/${profile.slug}`}>

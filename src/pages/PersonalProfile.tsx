@@ -2,7 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Phone, MessageCircle, Mail, Globe, MapPin, Facebook, Instagram, Linkedin, Twitter, Download, User, Loader2, Pencil, Briefcase, Sparkles, Image, GraduationCap } from "lucide-react";
+import { Phone, MessageCircle, Mail, Globe, MapPin, Facebook, Instagram, Linkedin, Twitter, Download, User, Loader2, Pencil, Briefcase, Sparkles, Image, GraduationCap, LayoutDashboard } from "lucide-react";
 import { fetchProfileBySlug, incrementViews } from "@/lib/api";
 import { downloadVCard } from "@/lib/vcard";
 import { useAuth } from "@/hooks/useAuth";
@@ -106,6 +106,11 @@ export default function PersonalProfile() {
       {/* Owner actions */}
       {!!user && profile.user_id === user.id && (
         <div className="w-full max-w-sm flex justify-end gap-2">
+          <Button asChild size="sm" variant="outline" className="text-xs sm:text-sm">
+            <Link to="/dashboard">
+              <LayoutDashboard className="h-3.5 w-3.5 mr-1.5" /> Dashboard
+            </Link>
+          </Button>
           <ThemeDrawer profile={profile} />
           <Button asChild size="sm" variant="outline" className="text-xs sm:text-sm">
             <Link to={`/edit/${profile.slug}`}>

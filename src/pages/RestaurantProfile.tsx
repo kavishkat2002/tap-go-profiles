@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Phone, MessageCircle, Mail, MapPin, Globe,
   UtensilsCrossed, Loader2, Facebook, Instagram, Twitter, Linkedin, Pencil,
-  PlusCircle, MinusCircle, ShoppingBag, Info
+  PlusCircle, MinusCircle, ShoppingBag, Info, LayoutDashboard
 } from "lucide-react";
 import { fetchProfileBySlug, fetchMenuForProfile, incrementViews, createOrder } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
@@ -176,6 +176,11 @@ export default function RestaurantProfile() {
         {/* Owner actions */}
         {isOwner && (
           <div className="flex justify-end gap-2">
+            <Button asChild size="sm" variant="outline" className="text-xs sm:text-sm">
+              <Link to="/dashboard">
+                <LayoutDashboard className="h-3.5 w-3.5 mr-1.5" /> Dashboard
+              </Link>
+            </Button>
             <ThemeDrawer profile={profile} />
             <Button asChild size="sm" variant="outline" className="text-xs sm:text-sm">
               <Link to={`/edit/${profile.slug}`}>
