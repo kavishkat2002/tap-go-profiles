@@ -6,9 +6,7 @@ import { Phone, MessageCircle, Mail, Globe, MapPin, Facebook, Instagram, Linkedi
 import { fetchProfileBySlug, incrementViews } from "@/lib/api";
 import { downloadVCard } from "@/lib/vcard";
 import { useAuth } from "@/hooks/useAuth";
-import { useEffect, useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { X } from "lucide-react";
+import { useEffect } from "react";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import ThemeDrawer from "@/components/ThemeDrawer";
 import SuspendedView from "@/components/SuspendedView";
@@ -18,7 +16,6 @@ import { supabase } from "@/integrations/supabase/client";
 export default function PersonalProfile() {
   const { username } = useParams();
   const { user } = useAuth();
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const { data: profile, isLoading, refetch: refetchProfile } = useQuery({
     queryKey: ["profile", username],
@@ -216,17 +213,6 @@ export default function PersonalProfile() {
 
           {/* Experience & Projects */}
           <div className="space-y-4 mb-6 text-left">
-              {(profile as any).education && (
-                  <div className="bg-slate-500/5 rounded-2xl p-4 border border-slate-500/10">
-                      <h4 className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">
-                          Academic Background
-                      </h4>
-                      <p className="text-xs text-muted-foreground whitespace-pre-wrap leading-relaxed">
-                          {(profile as any).education}
-                      </p>
-                  </div>
-              )}
-
               {(profile as any).experience && (
                   <div className="bg-primary/5 rounded-2xl p-4 border border-primary/10">
                       <h4 className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-primary mb-2">
@@ -234,6 +220,17 @@ export default function PersonalProfile() {
                       </h4>
                       <p className="text-xs text-muted-foreground whitespace-pre-wrap leading-relaxed">
                           {(profile as any).experience}
+                      </p>
+                  </div>
+              )}
+
+              {(profile as any).education && (
+                  <div className="bg-slate-500/5 rounded-2xl p-4 border border-slate-500/10">
+                      <h4 className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">
+                          <GraduationCap className="h-3 w-3" /> Academic Background
+                      </h4>
+                      <p className="text-xs text-muted-foreground whitespace-pre-wrap leading-relaxed">
+                          {(profile as any).education}
                       </p>
                   </div>
               )}
@@ -256,11 +253,7 @@ export default function PersonalProfile() {
                       </h4>
                       <div className="grid grid-cols-3 gap-2">
                           {(profile as any).gallery.filter(Boolean).map((url: string, i: number) => (
-                              <div 
-                                key={i} 
-                                onClick={() => setPreviewImage(url)}
-                                className="aspect-square rounded-xl overflow-hidden shadow-sm border border-border/40 cursor-zoom-in"
-                              >
+                              <div key={i} className="aspect-square rounded-xl overflow-hidden shadow-sm border border-border/40">
                                   <img src={url} alt={`Gallery ${i}`} className="w-full h-full object-cover transition-transform hover:scale-110" />
                               </div>
                           ))}
@@ -274,27 +267,6 @@ export default function PersonalProfile() {
           </Button>
         </CardContent>
       </Card>
-
-      {/* Image Preview Modal */}
-      <Dialog open={!!previewImage} onOpenChange={() => setPreviewImage(null)}>
-          <DialogContent className="max-w-[95vw] sm:max-w-3xl p-0 overflow-hidden border-none bg-transparent shadow-none children-close-none">
-              <div className="relative w-full h-full flex items-center justify-center p-4">
-                  <img 
-                    src={previewImage || ""} 
-                    alt="Preview" 
-                    className="max-w-full max-h-[85vh] rounded-2xl shadow-2xl animate-in zoom-in-95 duration-300" 
-                  />
-                  <Button 
-                    variant="secondary" 
-                    size="icon" 
-                    onClick={() => setPreviewImage(null)}
-                    className="absolute top-0 right-0 h-10 w-10 rounded-full bg-black/50 text-white backdrop-blur-md hover:bg-black/70 border-white/20 transition-all hover:scale-110"
-                  >
-                      <X className="h-5 w-5" />
-                  </Button>
-              </div>
-          </DialogContent>
-      </Dialog>
       <ProfileFooter />
     </div>
   );

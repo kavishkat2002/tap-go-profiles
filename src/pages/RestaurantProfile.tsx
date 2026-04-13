@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Phone, MessageCircle, Mail, MapPin, Globe,
   UtensilsCrossed, Loader2, Facebook, Instagram, Twitter, Linkedin, Pencil,
-  PlusCircle, MinusCircle, ShoppingBag, Info, X
+  PlusCircle, MinusCircle, ShoppingBag, Info
 } from "lucide-react";
 import { fetchProfileBySlug, fetchMenuForProfile, incrementViews, createOrder } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
@@ -28,7 +28,6 @@ export default function RestaurantProfile() {
   const { restaurant } = useParams();
   const { user } = useAuth();
   const { toast } = useToast();
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const { data: profile, isLoading, refetch: refetchProfile } = useQuery({
     queryKey: ["profile", restaurant],
@@ -239,11 +238,7 @@ export default function RestaurantProfile() {
               <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/50 mb-2">Gallery</p>
               <div className="grid grid-cols-3 gap-2">
                 {profile.gallery.map((url: string, i: number) => (
-                  <div 
-                    key={i} 
-                    onClick={() => setPreviewImage(url)}
-                    className="aspect-square rounded-lg overflow-hidden border border-border/40 shadow-sm transition-transform hover:scale-105 active:scale-95 cursor-zoom-in"
-                  >
+                  <div key={i} className="aspect-square rounded-lg overflow-hidden border border-border/40 shadow-sm transition-transform hover:scale-105 active:scale-95 cursor-pointer">
                     <img src={url} alt={`Gallery ${i}`} className="w-full h-full object-cover" />
                   </div>
                 ))}
@@ -251,27 +246,6 @@ export default function RestaurantProfile() {
             </div>
           )}
         </Card>
-
-        {/* Image Preview Modal */}
-        <Dialog open={!!previewImage} onOpenChange={() => setPreviewImage(null)}>
-            <DialogContent className="max-w-[95vw] sm:max-w-3xl p-0 overflow-hidden border-none bg-transparent shadow-none children-close-none">
-                <div className="relative w-full h-full flex items-center justify-center p-4">
-                    <img 
-                      src={previewImage || ""} 
-                      alt="Preview" 
-                      className="max-w-full max-h-[85vh] rounded-2xl shadow-2xl animate-in zoom-in-95 duration-300" 
-                    />
-                    <Button 
-                      variant="secondary" 
-                      size="icon" 
-                      onClick={() => setPreviewImage(null)}
-                      className="absolute top-0 right-0 h-10 w-10 rounded-full bg-black/50 text-white backdrop-blur-md hover:bg-black/70 border-white/20 transition-all hover:scale-110"
-                    >
-                        <X className="h-5 w-5" />
-                    </Button>
-                </div>
-            </DialogContent>
-        </Dialog>
 
         {/* ── Contact buttons ── */}
         {contactButtons.length > 0 && (
