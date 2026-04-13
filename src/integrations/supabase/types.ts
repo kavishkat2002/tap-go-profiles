@@ -128,6 +128,54 @@ export type Database = {
           },
         ]
       }
+      profile_requests: {
+        Row: {
+          id: string
+          user_id: string
+          profile_type: string
+          name: string
+          email: string
+          phone: string
+          address: string | null
+          package: string
+          payment_slip_url: string | null
+          status: string
+          admin_note: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          profile_type: string
+          name: string
+          email: string
+          phone: string
+          address?: string | null
+          package: string
+          payment_slip_url?: string | null
+          status?: string
+          admin_note?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          profile_type?: string
+          name?: string
+          email?: string
+          phone?: string
+          address?: string | null
+          package?: string
+          payment_slip_url?: string | null
+          status?: string
+          admin_note?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           address: string | null

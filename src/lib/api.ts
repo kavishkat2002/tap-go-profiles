@@ -60,6 +60,14 @@ export async function createProfile(profile: TablesInsert<"profiles">) {
   return data;
 }
 
+export async function deleteProfile(profileId: string) {
+  const { error } = await supabase
+    .from("profiles")
+    .delete()
+    .eq("id", profileId);
+  if (error) throw error;
+}
+
 export async function createMenuCategory(category: TablesInsert<"menu_categories">) {
   const { data, error } = await supabase
     .from("menu_categories")
@@ -174,6 +182,48 @@ export async function fetchOrdersByProfileId(profileId: string) {
     .select("*")
     .eq("profile_id", profileId)
     .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data;
+}
+
+// ─── profile requests ────────────────────────────────────────────────────────
+
+export async function createProfileRequest(request: TablesInsert<"profile_requests">) {
+  const { data, error } = await supabase
+    .from("profile_requests")
+    .insert(request)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+export async function fetchUserProfileRequests(userId: string) {
+  const { data, error } = await supabase
+    .from("profile_requests")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data;
+}
+
+export async function fetchAllProfileRequests() {
+  const { data, error } = await supabase
+    .from("profile_requests")
+    .select("*")
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data;
+}
+
+export async function updateProfileRequest(id: string, updates: Partial<TablesInsert<"profile_requests">>) {
+  const { data, error } = await supabase
+    .from("profile_requests")
+    .update(updates)
+    .eq("id", id)
+    .select()
+    .single();
   if (error) throw error;
   return data;
 }

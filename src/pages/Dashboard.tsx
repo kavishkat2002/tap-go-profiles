@@ -1,19 +1,21 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Smartphone, Plus, Eye, QrCode, LogOut, Loader2, ShoppingBag } from "lucide-react";
+import { Smartphone, Plus, Eye, QrCode, LogOut, Loader2, ShoppingBag, Clock, CheckCircle2, XCircle, User, Store, UtensilsCrossed, Trash2 } from "lucide-react";
 import ProfileCard from "@/components/ProfileCard";
 import QRCodeDisplay from "@/components/QRCodeDisplay";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useAuth } from "@/hooks/useAuth";
-import { useQuery } from "@tanstack/react-query";
-import { fetchUserProfiles } from "@/lib/api";
-import { useEffect } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { fetchUserProfiles, fetchUserProfileRequests, deleteProfile } from "@/lib/api";
+import { useEffect, useState } from "react";
 
 export default function Dashboard() {
   const { user, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const baseUrl = window.location.origin;
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/login");
@@ -22,6 +24,12 @@ export default function Dashboard() {
   const { data: profiles = [], isLoading } = useQuery({
     queryKey: ["user-profiles", user?.id],
     queryFn: () => fetchUserProfiles(user!.id),
+    enabled: !!user,
+  });
+
+  const { data: profileRequests = [] } = useQuery({
+    queryKey: ["profile-requests", user?.id],
+    queryFn: () => fetchUserProfileRequests(user!.id),
     enabled: !!user,
   });
 
@@ -75,7 +83,7 @@ export default function Dashboard() {
             <p className="text-muted-foreground text-sm">Manage your digital profiles</p>
           </div>
           <Button asChild>
-            <Link to="/create-profile"><Plus className="h-4 w-4 mr-2" /> New Profile</Link>
+            <Link to="/request-profile"><Plus className="h-4 w-4 mr-2" /> New Profile</Link>
           </Button>
         </div>
 
@@ -130,9 +138,9 @@ export default function Dashboard() {
           <CardContent>
             {profiles.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-muted-foreground mb-4">No profiles yet. Create your first one!</p>
+                <p className="text-muted-foreground mb-4">No profiles yet. Request your first one!</p>
                 <Button asChild>
-                  <Link to="/create-profile"><Plus className="h-4 w-4 mr-2" /> Create Profile</Link>
+                  <Link to="/request-profile"><Plus className="h-4 w-4 mr-2" /> Request Profile</Link>
                 </Button>
               </div>
             ) : (
@@ -172,6 +180,45 @@ export default function Dashboard() {
                           </Link>
                         </Button>
                       )}
+
+                      {/* Delete Profile */}
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button size="icon" variant="secondary" className="h-8 w-8 shadow-sm bg-destructive/10 hover:bg-destructive/20 text-destructive border-none">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-sm">
+                          <DialogHeader>
+                            <DialogTitle className="font-display">Delete Profile</DialogTitle>
+                          </DialogHeader>
+                          <div className="py-4">
+                            <p className="text-sm text-muted-foreground mb-4">
+                              Are you sure you want to delete <strong>{p.name}</strong>? This action cannot be undone.
+                            </p>
+                            <div className="flex gap-2">
+                              <Button
+                                variant="destructive"
+                                className="flex-1" 
+                                disabled={deletingId === p.id}
+                                onClick={async () => {
+                                  setDeletingId(p.id);
+                                  try {
+                                    await deleteProfile(p.id);
+                                    queryClient.invalidateQueries({ queryKey: ["user-profiles"] });
+                                  } catch (err: any) {
+                                    console.error(err);
+                                  } finally {
+                                    setDeletingId(null);
+                                  }
+                                }}
+                              >
+                                {deletingId === p.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Trash2 className="h-4 w-4 mr-2" /> Delete</>}
+                              </Button>
+                            </div>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
                     </div>
                   </div>
                 ))}
@@ -179,6 +226,44 @@ export default function Dashboard() {
             )}
           </CardContent>
         </Card>
+
+        {/* Profile Requests */}
+        {profileRequests.length > 0 && (
+          <Card className="card-elevated">
+            <CardHeader>
+              <CardTitle className="font-display text-lg">Your Profile Requests</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {profileRequests.map((req) => (
+                <div key={req.id} className="flex items-center justify-between p-3 rounded-xl bg-muted/30 border">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className={`h-9 w-9 rounded-lg flex items-center justify-center shrink-0 ${
+                      req.profile_type === "personal" ? "bg-blue-100" : req.profile_type === "business" ? "bg-emerald-100" : "bg-orange-100"
+                    }`}>
+                      {req.profile_type === "personal" ? <User className="h-4 w-4 text-blue-600" /> :
+                       req.profile_type === "business" ? <Store className="h-4 w-4 text-emerald-600" /> :
+                       <UtensilsCrossed className="h-4 w-4 text-orange-600" />}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium truncate">{req.name}</p>
+                      <p className="text-[10px] text-muted-foreground capitalize">{req.profile_type} • {req.package} package • {new Date(req.created_at).toLocaleDateString()}</p>
+                    </div>
+                  </div>
+                  <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0 ${
+                    req.status === "approved" ? "text-green-700 bg-green-100" :
+                    req.status === "rejected" ? "text-red-700 bg-red-100" :
+                    "text-amber-700 bg-amber-100"
+                  }`}>
+                    {req.status === "approved" ? <CheckCircle2 className="h-3 w-3" /> :
+                     req.status === "rejected" ? <XCircle className="h-3 w-3" /> :
+                     <Clock className="h-3 w-3" />}
+                    <span className="capitalize">{req.status}</span>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        )}
       </main>
     </div>
   );

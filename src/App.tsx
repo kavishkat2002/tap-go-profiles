@@ -15,6 +15,7 @@ import NotFound from "./pages/NotFound";
 import EditProfile from "./pages/EditProfile";
 import Admin from "./pages/Admin";
 import Orders from "./pages/Orders";
+import RequestProfile from "./pages/RequestProfile";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/orders/:slug" element={<Orders />} />
             <Route path="/create-profile" element={<CreateProfile />} />
+            <Route path="/request-profile" element={<RequestProfile />} />
             <Route path="/u/:username" element={<PersonalProfile />} />
             <Route path="/b/:business" element={<BusinessProfile />} />
             <Route path="/r/:restaurant" element={<RestaurantProfile />} />

@@ -2,8 +2,9 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { 
-  fetchAllProfiles, updateProfile 
+  fetchAllProfiles, updateProfile, fetchAllProfileRequests, updateProfileRequest, deleteProfile
 } from "@/lib/api";
+import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -11,7 +12,8 @@ import { Badge } from "@/components/ui/badge";
 import { 
   Users, ShieldAlert, CheckCircle, 
   Ban, ShieldCheck, Loader2, ArrowLeft, ExternalLink, Search,
-  Settings, CreditCard, Zap
+  Settings, CreditCard, Zap, Clock, CheckCircle2, XCircle, User, Store, UtensilsCrossed,
+  Package, Image, Eye, Trash2
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -19,6 +21,10 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import ProfileFooter from "@/components/ProfileFooter";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger,
+} from "@/components/ui/dialog";
 
 export default function AdminDashboard() {
   const { user } = useAuth();
@@ -30,6 +36,13 @@ export default function AdminDashboard() {
     queryKey: ["admin", "profiles"],
     queryFn: fetchAllProfiles,
   });
+
+  const { data: profileRequests = [], isLoading: requestsLoading } = useQuery({
+    queryKey: ["admin", "profile-requests"],
+    queryFn: fetchAllProfileRequests,
+  });
+
+  const pendingRequests = profileRequests.filter(r => r.status === "pending");
 
   const handleBlockUser = async (profileId: string, isBlocked: boolean) => {
     try {
@@ -58,6 +71,42 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleApproveRequest = async (request: any) => {
+    try {
+      const slug = request.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+      const uniqueSlug = `${slug}-${Date.now().toString(36)}`;
+      
+      // Use RPC to create profile under the requesting user's account (bypasses RLS)
+      const { error: rpcError } = await supabase.rpc("admin_create_profile", {
+        p_user_id: request.user_id,
+        p_name: request.name,
+        p_slug: uniqueSlug,
+        p_type: request.profile_type,
+        p_email: request.email,
+        p_phone: request.phone,
+        p_address: request.address,
+      });
+      if (rpcError) throw rpcError;
+
+      await updateProfileRequest(request.id, { status: "approved" });
+      queryClient.invalidateQueries({ queryKey: ["admin", "profile-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "profiles"] });
+      toast({ title: "Request Approved", description: `Profile created for ${request.name}.` });
+    } catch (err: any) {
+      toast({ title: "Approval failed", description: err.message, variant: "destructive" });
+    }
+  };
+
+  const handleRejectRequest = async (requestId: string) => {
+    try {
+      await updateProfileRequest(requestId, { status: "rejected" });
+      queryClient.invalidateQueries({ queryKey: ["admin", "profile-requests"] });
+      toast({ title: "Request Rejected", description: "The profile request has been declined." });
+    } catch (err: any) {
+      toast({ title: "Rejection failed", description: err.message, variant: "destructive" });
+    }
+  };
+
   // Filter profiles
   const filteredProfiles = profiles?.filter(p => 
     p.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -65,7 +114,7 @@ export default function AdminDashboard() {
     p.email?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  if (profilesLoading) {
+  if (profilesLoading || requestsLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -151,6 +200,120 @@ export default function AdminDashboard() {
           </Card>
         </div>
 
+        <Tabs defaultValue="requests" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2 h-11">
+            <TabsTrigger value="requests" className="text-sm font-bold gap-2 relative">
+              <Package className="h-4 w-4" /> Profile Requests
+              {pendingRequests.length > 0 && (
+                <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                  {pendingRequests.length}
+                </span>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="accounts" className="text-sm font-bold gap-2">
+              <Users className="h-4 w-4" /> Account Management
+            </TabsTrigger>
+          </TabsList>
+
+          {/* ── Profile Requests Tab ── */}
+          <TabsContent value="requests">
+            <Card className="card-artistic border-none overflow-hidden">
+              <CardHeader className="pb-3 border-b bg-muted/20">
+                <CardTitle className="text-lg">Profile Requests</CardTitle>
+                <CardDescription>Review incoming profile creation requests, verify payments, and approve or reject.</CardDescription>
+              </CardHeader>
+              <CardContent className="p-0">
+                {profileRequests.length === 0 ? (
+                  <div className="text-center py-16">
+                    <Package className="h-10 w-10 text-muted-foreground/30 mx-auto mb-3" />
+                    <p className="text-sm text-muted-foreground">No profile requests yet.</p>
+                  </div>
+                ) : (
+                  <div className="divide-y">
+                    {profileRequests.map((req) => (
+                      <div key={req.id} className={`p-4 sm:p-5 transition-colors ${
+                        req.status === "pending" ? "bg-amber-50/30" : ""
+                      }`}>
+                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                          <div className="flex items-start gap-3 min-w-0 flex-1">
+                            <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 ${
+                              req.profile_type === "personal" ? "bg-blue-100" : req.profile_type === "business" ? "bg-emerald-100" : "bg-orange-100"
+                            }`}>
+                              {req.profile_type === "personal" ? <User className="h-5 w-5 text-blue-600" /> :
+                               req.profile_type === "business" ? <Store className="h-5 w-5 text-emerald-600" /> :
+                               <UtensilsCrossed className="h-5 w-5 text-orange-600" />}
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <p className="text-sm font-bold">{req.name}</p>
+                              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
+                                <span className="text-[11px] text-muted-foreground">{req.email}</span>
+                                <span className="text-[11px] text-muted-foreground">{req.phone}</span>
+                                {req.address && <span className="text-[11px] text-muted-foreground">{req.address}</span>}
+                              </div>
+                              <div className="flex items-center gap-2 mt-2 flex-wrap">
+                                <Badge variant="outline" className="capitalize text-[10px] bg-background">{req.profile_type}</Badge>
+                                <Badge variant="outline" className="capitalize text-[10px] bg-primary/5 text-primary border-primary/20">{req.package} package</Badge>
+                                <span className="text-[10px] text-muted-foreground">{new Date(req.created_at).toLocaleString()}</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2 shrink-0">
+                            {req.payment_slip_url && (
+                              <Dialog>
+                                <DialogTrigger asChild>
+                                  <Button variant="outline" size="sm" className="text-xs gap-1">
+                                    <Eye className="h-3 w-3" /> Slip
+                                  </Button>
+                                </DialogTrigger>
+                                <DialogContent className="max-w-md">
+                                  <DialogHeader>
+                                    <DialogTitle>Payment Slip — {req.name}</DialogTitle>
+                                  </DialogHeader>
+                                  <img src={req.payment_slip_url} alt="Payment Slip" className="w-full rounded-xl border" />
+                                </DialogContent>
+                              </Dialog>
+                            )}
+
+                            {req.status === "pending" ? (
+                              <div className="flex gap-1">
+                                <Button
+                                  size="sm"
+                                  className="text-xs gap-1 bg-green-600 hover:bg-green-700"
+                                  onClick={() => handleApproveRequest(req)}
+                                >
+                                  <CheckCircle2 className="h-3 w-3" /> Accept
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="destructive"
+                                  className="text-xs gap-1"
+                                  onClick={() => handleRejectRequest(req.id)}
+                                >
+                                  <XCircle className="h-3 w-3" /> Reject
+                                </Button>
+                              </div>
+                            ) : (
+                              <Badge variant="outline" className={`gap-1 px-2 py-0.5 text-[10px] ${
+                                req.status === "approved" ? "text-green-600 border-green-200 bg-green-50" :
+                                "text-red-600 border-red-200 bg-red-50"
+                              }`}>
+                                {req.status === "approved" ? <CheckCircle2 className="h-3 w-3" /> : <XCircle className="h-3 w-3" />}
+                                {req.status === "approved" ? "Approved" : "Rejected"}
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* ── Account Management Tab ── */}
+          <TabsContent value="accounts">
         <Card className="card-artistic border-none overflow-hidden">
           <CardHeader className="pb-3 border-b bg-muted/20">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -261,6 +424,24 @@ export default function AdminDashboard() {
                         >
                           {profile.is_blocked ? <ShieldCheck className="h-4 w-4" /> : <Ban className="h-4 w-4" />}
                         </Button>
+                        <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="text-destructive hover:text-destructive"
+                            onClick={async () => {
+                              if (!confirm(`Delete profile "${profile.name}"? This cannot be undone.`)) return;
+                              try {
+                                await deleteProfile(profile.id);
+                                queryClient.invalidateQueries({ queryKey: ["admin", "profiles"] });
+                                toast({ title: "Profile Deleted", description: `${profile.name} has been removed.` });
+                              } catch (err: any) {
+                                toast({ title: "Delete failed", description: err.message, variant: "destructive" });
+                              }
+                            }}
+                            title="Delete Profile"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -269,6 +450,8 @@ export default function AdminDashboard() {
             </Table>
           </CardContent>
         </Card>
+          </TabsContent>
+        </Tabs>
       </main>
 
       <ProfileFooter />
