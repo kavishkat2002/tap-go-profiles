@@ -141,7 +141,6 @@ export default function PersonalProfile() {
           
           {((profile as any).position || (profile as any).workplace) && (
               <div className="flex items-center justify-center gap-1.5 text-xs font-semibold text-primary/80 mt-0.5 mb-1 italic">
-                  <Briefcase className="h-3 w-3" />
                   <span>
                       {(profile as any).position} {(profile as any).position && (profile as any).workplace && "@"} {(profile as any).workplace}
                   </span>
@@ -217,7 +216,7 @@ export default function PersonalProfile() {
               {(profile as any).experience && (
                   <div className="bg-primary/5 rounded-2xl p-4 border border-primary/10">
                       <h4 className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-primary mb-2">
-                          <Briefcase className="h-3 w-3" /> Professional Journey
+                          Professional Journey
                       </h4>
                       <p className="text-xs text-muted-foreground whitespace-pre-wrap leading-relaxed">
                           {(profile as any).experience}
