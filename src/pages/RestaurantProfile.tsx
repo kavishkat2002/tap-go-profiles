@@ -23,6 +23,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import ProfileFooter from "@/components/ProfileFooter";
 import { supabase } from "@/integrations/supabase/client";
+import ImagePreview from "@/components/ImagePreview";
 
 export default function RestaurantProfile() {
   const { restaurant } = useParams();
@@ -97,8 +98,10 @@ export default function RestaurantProfile() {
     );
   }
 
+  const isOwner = !!user && profile.user_id === user.id;
+
   if ((profile as any).is_blocked) {
-    return <SuspendedView />;
+    return <SuspendedView isOwner={isOwner} />;
   }
 
   const addToCart = (item: any) => {
@@ -161,7 +164,7 @@ export default function RestaurantProfile() {
     profile.linkedin  && { href: profile.linkedin,  icon: <Linkedin  className="h-4 w-4" />, label: "LinkedIn"  },
   ].filter(Boolean) as { href: string; icon: React.ReactNode; label: string }[];
 
-  const isOwner = !!user && profile.user_id === user.id;
+  // isOwner moved up
 
   return (
     <div
@@ -238,9 +241,11 @@ export default function RestaurantProfile() {
               <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/50 mb-2">Gallery</p>
               <div className="grid grid-cols-3 gap-2">
                 {profile.gallery.map((url: string, i: number) => (
-                  <div key={i} className="aspect-square rounded-lg overflow-hidden border border-border/40 shadow-sm transition-transform hover:scale-105 active:scale-95 cursor-pointer">
-                    <img src={url} alt={`Gallery ${i}`} className="w-full h-full object-cover" />
-                  </div>
+                  <ImagePreview key={i} src={url} alt={`Gallery ${i}`}>
+                    <div className="aspect-square rounded-lg overflow-hidden border border-border/40 shadow-sm transition-transform hover:scale-105 active:scale-95 cursor-pointer">
+                      <img src={url} alt={`Gallery ${i}`} className="w-full h-full object-cover" />
+                    </div>
+                  </ImagePreview>
                 ))}
               </div>
             </div>
@@ -359,15 +364,19 @@ export default function RestaurantProfile() {
                               <DialogTitle className="text-lg sm:text-xl">{item.name}</DialogTitle>
                             </DialogHeader>
                             <div className="space-y-3 py-2">
-                              <div className="aspect-video w-full rounded-2xl overflow-hidden bg-muted border">
-                                <img src={item.image_url || "/placeholder-food.png"} className="w-full h-full object-cover" alt={item.name} />
-                              </div>
+                              <ImagePreview src={item.image_url || "/placeholder-food.png"} alt={item.name}>
+                                <div className="aspect-video w-full rounded-2xl overflow-hidden bg-muted border cursor-pointer">
+                                  <img src={item.image_url || "/placeholder-food.png"} className="w-full h-full object-cover transition-transform hover:scale-105" alt={item.name} />
+                                </div>
+                              </ImagePreview>
                               {item.gallery && item.gallery.length > 0 && (
                                 <div className="grid grid-cols-3 gap-2">
                                   {item.gallery.map((url: string, gi: number) => (
-                                    <div key={gi} className="aspect-square rounded-lg overflow-hidden border">
-                                      <img src={url} className="h-full w-full object-cover" alt="" />
-                                    </div>
+                                    <ImagePreview key={gi} src={url} alt={`${item.name} gallery ${gi}`}>
+                                      <div className="aspect-square rounded-lg overflow-hidden border cursor-pointer">
+                                        <img src={url} className="h-full w-full object-cover transition-transform hover:scale-110" alt="" />
+                                      </div>
+                                    </ImagePreview>
                                   ))}
                                 </div>
                               )}

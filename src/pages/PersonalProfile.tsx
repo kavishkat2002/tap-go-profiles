@@ -12,6 +12,7 @@ import ThemeDrawer from "@/components/ThemeDrawer";
 import SuspendedView from "@/components/SuspendedView";
 import ProfileFooter from "@/components/ProfileFooter";
 import { supabase } from "@/integrations/supabase/client";
+import ImagePreview from "@/components/ImagePreview";
 
 export default function PersonalProfile() {
   const { username } = useParams();
@@ -70,8 +71,10 @@ export default function PersonalProfile() {
     );
   }
 
+  const isOwner = !!user && profile.user_id === user.id;
+
   if ((profile as any).is_blocked) {
-    return <SuspendedView />;
+    return <SuspendedView isOwner={isOwner} />;
   }
 
   const socialIcons = [
@@ -253,9 +256,11 @@ export default function PersonalProfile() {
                       </h4>
                       <div className="grid grid-cols-3 gap-2">
                           {(profile as any).gallery.filter(Boolean).map((url: string, i: number) => (
-                              <div key={i} className="aspect-square rounded-xl overflow-hidden shadow-sm border border-border/40">
-                                  <img src={url} alt={`Gallery ${i}`} className="w-full h-full object-cover transition-transform hover:scale-110" />
-                              </div>
+                              <ImagePreview key={i} src={url} alt={`Gallery ${i}`}>
+                                <div className="aspect-square rounded-xl overflow-hidden shadow-sm border border-border/40 cursor-pointer group">
+                                    <img src={url} alt={`Gallery ${i}`} className="w-full h-full object-cover transition-transform group-hover:scale-110" />
+                                </div>
+                              </ImagePreview>
                           ))}
                       </div>
                   </div>

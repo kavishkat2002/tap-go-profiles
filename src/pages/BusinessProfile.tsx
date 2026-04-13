@@ -15,6 +15,7 @@ import ThemeDrawer from "@/components/ThemeDrawer";
 import SuspendedView from "@/components/SuspendedView";
 import ProfileFooter from "@/components/ProfileFooter";
 import { supabase } from "@/integrations/supabase/client";
+import ImagePreview from "@/components/ImagePreview";
 
 export default function BusinessProfile() {
   const { business } = useParams();
@@ -73,8 +74,10 @@ export default function BusinessProfile() {
     );
   }
 
+  const isOwner = !!user && profile.user_id === user.id;
+
   if ((profile as any).is_blocked) {
-    return <SuspendedView />;
+    return <SuspendedView isOwner={isOwner} />;
   }
 
   const contactButtons = [
@@ -91,7 +94,7 @@ export default function BusinessProfile() {
     profile.linkedin  && { href: profile.linkedin,  icon: <Linkedin  className="h-4 w-4" />, label: "LinkedIn"  },
   ].filter(Boolean) as { href: string; icon: React.ReactNode; label: string }[];
 
-  const isOwner = !!user && profile.user_id === user.id;
+  // isOwner moved up
 
   return (
     <div
@@ -167,9 +170,11 @@ export default function BusinessProfile() {
               <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/50 mb-2">Gallery</p>
               <div className="grid grid-cols-3 gap-2">
                 {(profile.gallery as string[]).map((url, i) => (
-                  <div key={i} className="aspect-square rounded-lg overflow-hidden border border-border/40 shadow-sm transition-transform hover:scale-105 active:scale-95 cursor-pointer">
-                    <img src={url} alt={`Gallery ${i}`} className="w-full h-full object-cover" />
-                  </div>
+                  <ImagePreview key={i} src={url} alt={`Gallery ${i}`}>
+                    <div className="aspect-square rounded-lg overflow-hidden border border-border/40 shadow-sm transition-transform hover:scale-105 active:scale-95 cursor-pointer">
+                      <img src={url} alt={`Gallery ${i}`} className="w-full h-full object-cover" />
+                    </div>
+                  </ImagePreview>
                 ))}
               </div>
             </div>

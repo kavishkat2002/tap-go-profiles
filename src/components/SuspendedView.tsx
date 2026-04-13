@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
 
-export default function SuspendedView() {
+export default function SuspendedView({ isOwner = false }: { isOwner?: boolean }) {
   const { user } = useAuth();
 
   return (
@@ -28,7 +28,7 @@ export default function SuspendedView() {
                 <Link to="/">Explore SmartTap</Link>
             </Button>
             
-            {user && (
+            {user && isOwner && (
               <Button variant="ghost" asChild className="gap-2 text-muted-foreground">
                   <Link to="/dashboard"><ArrowLeft className="h-4 w-4" /> Back to Dashboard</Link>
               </Button>
