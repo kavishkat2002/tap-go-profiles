@@ -75,8 +75,14 @@ export default function EditProfile() {
     email: "", website: "", address: "", facebook: "",
     instagram: "", linkedin: "", twitter: "", services: "",
     google_review_url: "",
+    workplace: "", position: "", experience: "", projects: "", education: "",
     theme: "theme-default", bg_theme: "bg-theme-default",
   });
+  const [galleryImages, setGalleryImages] = useState<{ file: File | null; preview: string | null; id: number }[]>([
+    { file: null, preview: null, id: 1 },
+    { file: null, preview: null, id: 2 },
+    { file: null, preview: null, id: 3 },
+  ]);
   const [menuCategories, setMenuCategories] = useState<MenuCategoryLocal[]>([]);
   const [profileImage, setProfileImage] = useState<{ file: File | null; preview: string | null; deleted?: boolean }>({ file: null, preview: null });
   const [coverImage, setCoverImage] = useState<{ file: File | null; preview: string | null; deleted?: boolean }>({ file: null, preview: null });
@@ -98,9 +104,21 @@ export default function EditProfile() {
       twitter: profile.twitter ?? "",
       services: (profile.services ?? []).join("\n"),
       google_review_url: (profile as any).google_review_url ?? "",
+      workplace: (profile as any).workplace ?? "",
+      position: (profile as any).position ?? "",
+      experience: (profile as any).experience ?? "",
+      projects: (profile as any).projects ?? "",
+      education: (profile as any).education ?? "",
       theme: profile.theme ?? "theme-default",
       bg_theme: profile.bg_theme ?? "bg-theme-default",
     });
+
+    const existingGallery = (profile as any).gallery ?? [];
+    setGalleryImages([
+      { file: null, preview: existingGallery[0] ?? null, id: 1 },
+      { file: null, preview: existingGallery[1] ?? null, id: 2 },
+      { file: null, preview: existingGallery[2] ?? null, id: 3 },
+    ]);
     setProfileImage({ file: null, preview: profile.image_url ?? null, deleted: false });
     setCoverImage({ file: null, preview: profile.cover_url ?? null, deleted: false });
   }, [profile]);
@@ -263,6 +281,23 @@ export default function EditProfile() {
         }
       }
 
+      // Gallery upload
+      const finalGallery: (string | null)[] = [...(profile as any).gallery ?? [null, null, null]];
+      for (let i = 0; i < 3; i++) {
+        const img = galleryImages[i];
+        if (img.file) {
+          try {
+            const ext = img.file.name.split('.').pop();
+            const path = `${user.id}/${Date.now()}-gallery-${i}.${ext}`;
+            const { data: uploadData, error: uploadErr } = await supabase.storage.from("profile-images").upload(path, img.file, { upsert: true });
+            if (uploadErr) throw uploadErr;
+            if (uploadData) finalGallery[i] = supabase.storage.from("profile-images").getPublicUrl(uploadData.path).data.publicUrl;
+          } catch (err: any) {
+            toast({ title: `Gallery info ${i+1} upload failed`, description: err.message, variant: "destructive" });
+          }
+        }
+      }
+
       // 1 — update profile fields
       const updates: any = {
         name: form.name,
@@ -277,11 +312,17 @@ export default function EditProfile() {
         linkedin: form.linkedin || null,
         twitter: form.twitter || null,
         google_review_url: form.google_review_url || null,
+        workplace: form.workplace || null,
+        position: form.position || null,
+        experience: form.experience || null,
+        projects: form.projects || null,
+        education: form.education || null,
+        gallery: finalGallery,
         theme: form.theme || "theme-default",
         bg_theme: form.bg_theme || "bg-theme-default",
         services: profile.type === "business" && form.services
           ? form.services.split("\n").map((s) => s.trim()).filter(Boolean)
-          : null,
+          : profile.services,
       };
 
       if (finalImageUrl !== undefined) updates.image_url = finalImageUrl;
@@ -526,6 +567,78 @@ export default function EditProfile() {
                   <Input id="website" type="url" value={form.website} onChange={set("website")} placeholder="https://example.com" />
                 </div>
               </div>
+
+              {profile.type === "personal" && (
+                  <div className="space-y-4 pt-4 border-t border-border/50">
+                    <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground/50">Career & Showcase</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="workplace">Company / Workplace</Label>
+                        <Input id="workplace" value={form.workplace} onChange={set("workplace")} placeholder="e.g. CreativeX Tech" className="rounded-xl h-11" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="position">Title / Position</Label>
+                        <Input id="position" value={form.position} onChange={set("position")} placeholder="e.g. Senior Developer" className="rounded-xl h-11" />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="experience">Professional Experience</Label>
+                      <Textarea id="experience" value={form.experience} onChange={set("experience")} placeholder="Describe your career journey..." className="rounded-xl min-h-[100px]" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="education">Academic Background</Label>
+                      <Textarea id="education" value={form.education} onChange={set("education")} placeholder="e.g. B.Sc in Computer Science, Harvard University..." className="rounded-xl min-h-[80px]" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="projects">Projects & Works</Label>
+                      <Textarea id="projects" value={form.projects} onChange={set("projects")} placeholder="Showcase your best projects..." className="rounded-xl min-h-[100px]" />
+                    </div>
+
+                    <div className="space-y-4">
+                        <Label>Works Gallery (3 Photos)</Label>
+                        <div className="grid grid-cols-3 gap-3">
+                            {galleryImages.map((img, idx) => (
+                                <div key={img.id} className="relative group aspect-square rounded-2xl bg-muted border-2 border-dashed border-border flex items-center justify-center overflow-hidden transition-all hover:border-primary/50">
+                                    {img.preview ? (
+                                        <>
+                                            <img src={img.preview} alt="Gallery" className="w-full h-full object-cover" />
+                                            <button 
+                                                type="button"
+                                                onClick={() => {
+                                                    const newG = [...galleryImages];
+                                                    newG[idx] = { ...newG[idx], file: null, preview: null };
+                                                    setGalleryImages(newG);
+                                                }}
+                                                className="absolute top-1 right-1 h-6 w-6 bg-destructive text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                            >
+                                                <Trash2 className="h-3 w-3" />
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <label className="cursor-pointer p-4 text-center flex flex-col items-center gap-1">
+                                            <ImagePlus className="h-6 w-6 text-muted-foreground" />
+                                            <span className="text-[10px] text-muted-foreground font-medium">Upload</span>
+                                            <input 
+                                                type="file" 
+                                                className="hidden" 
+                                                accept="image/*"
+                                                onChange={(e) => {
+                                                    const file = e.target.files?.[0];
+                                                    if (file) {
+                                                        const newG = [...galleryImages];
+                                                        newG[idx] = { ...newG[idx], file, preview: URL.createObjectURL(file) };
+                                                        setGalleryImages(newG);
+                                                    }
+                                                }}
+                                            />
+                                        </label>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                  </div>
+                )}
 
               <div className="space-y-2">
                 <Label htmlFor="address">Address</Label>
